@@ -25,6 +25,6 @@ export const useVerticalLabelValue = ({
 			[linePathTopY.value, linePathBottomY.value],
 			[dataStart, dataEnd]
 		)
-		return interpolatedY // TODO: pass formatter
+		return interpolatedY.toFixed(2) // TODO: pass formatter
 	})
 }

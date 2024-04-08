@@ -3,8 +3,8 @@ import React from 'react'
 import { SkFont, Text } from '@shopify/react-native-skia'
 import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 
-import { useVerticalLabelValue } from '@/components/LineChart/hooks'
-import { IInterpolationProps } from '@/components/LineChart/LineChart.types'
+import { useVerticalLabelValue } from '../../hooks'
+import { IInterpolationProps } from '../../LineChart.types'
 
 const LABEL_WRAPPER_HEIGHT = 16
 
