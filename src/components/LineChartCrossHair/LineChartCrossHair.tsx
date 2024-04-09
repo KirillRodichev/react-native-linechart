@@ -4,7 +4,6 @@ import {
 	Circle,
 	Line,
 	Rect,
-	SkFont,
 	SkPath,
 	vec,
 } from '@shopify/react-native-skia'
@@ -28,7 +27,6 @@ interface ILineChartCrossHairProps extends IInterpolationProps {
 	chartWidth: number
 	crossHair: SharedValue<ICrossHair | null>
 	linePath: SharedValue<SkPath>
-	font: SkFont
 	config: ILineChartConfig
 	// CrossHair pan range
 	linePathEndPointX: SharedValue<number>
@@ -40,7 +38,6 @@ export const LineChartCrossHair = ({
 	crossHair,
 	viewPortHeight,
 	linePath,
-	font,
 	config,
 	linePathEndPointX,
 	linePathStartPointX,
@@ -132,7 +129,6 @@ export const LineChartCrossHair = ({
 			<LineChartCrossHairLabel
 				y={y}
 				x={x}
-				font={font}
 				{...interpolationProps}
 			/>
 		</>

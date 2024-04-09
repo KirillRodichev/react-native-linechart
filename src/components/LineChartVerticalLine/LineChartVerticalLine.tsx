@@ -1,10 +1,11 @@
 import React from 'react'
 
 import { SharedValue, useDerivedValue } from 'react-native-reanimated'
-import { Line, SkFont, vec } from '@shopify/react-native-skia'
+import { Line, vec } from '@shopify/react-native-skia'
 
 import LineChartVerticalLineLabel from '../LineChartVerticalLineLabel'
 import { ITopBottomValue } from '../../LineChart.types'
+import { useLineChartFonts } from '../LineChartFontsContext'
 
 interface ILineChartVerticalLineProps {
 	index: number
@@ -14,7 +15,6 @@ interface ILineChartVerticalLineProps {
 	linePathEndPointX: SharedValue<number>
 	dataStart: number
 	dataEnd: number
-	font: SkFont
 	canvasHeight: number
 	labelOffset: ITopBottomValue
 	labelColor: string
@@ -30,13 +30,13 @@ export const LineChartVerticalLine = ({
 	linePathEndPointX,
 	dataEnd,
 	dataStart,
-	font,
 	canvasHeight,
 	labelOffset,
 	labelColor,
 	lineColor,
 	timeframe,
 }: ILineChartVerticalLineProps) => {
+	const { gridLabelFont: font } = useLineChartFonts()
 	const top = 0
 	const labelAreaHeight = labelOffset.bottom + labelOffset.top + font.getSize()
 	const lineBottom = canvasHeight - labelAreaHeight

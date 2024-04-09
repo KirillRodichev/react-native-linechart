@@ -42,9 +42,9 @@ export interface ILineChartConfig {
 
 	lineColors: GradientProps['colors']
 
-	fonts: {
-		positionLabelFont: SkFont
-		gridLabelFont: SkFont
+	fonts?: {
+		positionLabelFont?: SkFont
+		gridLabelFont?: SkFont
 	}
 }
 

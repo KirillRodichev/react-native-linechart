@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { SkFont } from '@shopify/react-native-skia'
 import { SharedValue } from 'react-native-reanimated'
 
 import { IDataPoint, ILineChartConfig } from '../../LineChart.types'
@@ -21,7 +20,6 @@ interface ILineChartGridProps {
 	gridHeight: number
 	chartWidth: number
 	timeframe: number
-	gridLabelFont: SkFont
 }
 
 export const LineChartGrid = ({
@@ -36,7 +34,6 @@ export const LineChartGrid = ({
 	linePathEndPointX,
 	everyRule,
 	timeframe,
-	gridLabelFont,
 }: ILineChartGridProps) => {
 	const dataStartVertical = data[0]?.timestamp ?? 0
 	const dataEndVertical = data[data.length - 1]?.timestamp ?? 0
@@ -65,7 +62,6 @@ export const LineChartGrid = ({
 							linePathEndPointX={linePathEndPointX}
 							dataStart={dataStartVertical}
 							dataEnd={dataEndVertical}
-							font={gridLabelFont}
 							canvasHeight={config.height}
 							labelOffset={config.timestampLabelOffset}
 							labelColor={config.labelColor}
@@ -79,7 +75,6 @@ export const LineChartGrid = ({
 					<LineChartHorizontalLine
 						key={i}
 						y={i * hLinesShift + config.hLinesOffset}
-						font={gridLabelFont}
 						dataEnd={globalMinMaxValues.min}
 						dataStart={globalMinMaxValues.max}
 						linePathTopY={linePathTopY}

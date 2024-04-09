@@ -1,15 +1,15 @@
 import React from 'react'
 
-import { SkFont, Text } from '@shopify/react-native-skia'
+import { Text } from '@shopify/react-native-skia'
 import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 
 import { useVerticalLabelValue } from '../../hooks'
 import { IInterpolationProps } from '../../LineChart.types'
+import { useLineChartFonts } from '../LineChartFontsContext'
 
 const LABEL_WRAPPER_HEIGHT = 16
 
 interface ILineChartCrossHairLabelProps extends IInterpolationProps {
-	font: SkFont
 	x: SharedValue<number>
 	y: SharedValue<number>
 }
@@ -17,9 +17,9 @@ interface ILineChartCrossHairLabelProps extends IInterpolationProps {
 export const LineChartCrossHairLabel = ({
 	x,
 	y,
-	font,
 	...interpolationProps
 }: ILineChartCrossHairLabelProps) => {
+	const { positionLabelFont: font } = useLineChartFonts()
 	const crossHairValue = useVerticalLabelValue({
 		...interpolationProps,
 		y,

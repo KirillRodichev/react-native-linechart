@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Path, RoundedRect, SkFont, Text } from '@shopify/react-native-skia'
+import { Path, RoundedRect, Text } from '@shopify/react-native-skia'
 import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 
 import {
@@ -10,9 +10,9 @@ import {
 	TRIANGLE_WIDTH,
 } from '../constants'
 import { useDxByType } from '../hooks'
+import { useLineChartFonts } from '../../LineChartFontsContext'
 
 interface ILineChartPositionLabelProps {
-	font: SkFont
 	backgroundColor: string
 	y: SharedValue<number>
 
@@ -24,12 +24,12 @@ interface ILineChartPositionLabelProps {
 
 export const LineChartPositionLabel = ({
 	y,
-	font,
 	backgroundColor,
 	canvasWidth,
 	type,
 	label,
 }: ILineChartPositionLabelProps) => {
+	const { positionLabelFont: font } = useLineChartFonts()
 	const textWidth = useDerivedValue(() => {
 		return font.measureText(label).width
 	})

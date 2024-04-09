@@ -25,7 +25,8 @@ import {
   LineChartGestureDetector,
   LineChartGrid,
   LineChartPointer,
-} from './components';
+  LineChartFontsProvider,
+} from './components'
 import { H_LABEL_WIDTH } from './LineChart.constants';
 import {
   findMinMaxValue,
@@ -79,7 +80,7 @@ export const LineChart = ({
     config.valueLabelOffset.right;
   const chartWidth = config.width - valueAreaHeight;
   const timeframe = (data[1]?.timestamp ?? 0) - (data[0]?.timestamp ?? 0);
-  const { positionLabelFont, gridLabelFont } = config.fonts
+  const { positionLabelFont, gridLabelFont } = config.fonts ?? {}
 
   const chart = {
     width: chartWidth,
@@ -278,62 +279,64 @@ export const LineChart = ({
       linePathEndPointX={linePathEndPointX}
     >
       <CanvasWithContext style={{ width: config.width, height: config.height }}>
-        <LineChartGrid
-          data={data}
-          config={config}
-          timeframe={timeframe}
-          everyRule={everyRule}
-          gridHeight={gridHeight}
-          chartWidth={chart.width}
-          dVerticalLine={dVerticalLine}
-          linePathTopY={linePathTopY}
+        <LineChartFontsProvider
           gridLabelFont={gridLabelFont}
-          linePathBottomY={linePathBottomY}
-          linePathEndPointX={linePathEndPointX}
-          linePathStartPointX={linePathStartPointX}
-        />
-
-        <LineChartPositionLine
-          y={linePathEndPointY}
-          color="black"
-          width={chart.width}
-        />
-
-        <LineChartClipPath height={gridHeight} width={chart.width}>
-          <Path style="stroke" strokeWidth={2} path={animatedPath}>
-            <LinearGradient
-              start={vec(config.width / 2, 0)}
-              end={vec(config.width / 2, gridHeight)}
-              colors={config.lineColors}
-            />
-          </Path>
-          <LineChartPointer
-            x={linePathEndPointX}
-            y={linePathEndPointY}
+          positionLabelFont={positionLabelFont}
+        >
+          <LineChartGrid
+            data={data}
+            config={config}
+            timeframe={timeframe}
+            everyRule={everyRule}
+            gridHeight={gridHeight}
+            chartWidth={chart.width}
+            dVerticalLine={dVerticalLine}
+            linePathTopY={linePathTopY}
+            linePathBottomY={linePathBottomY}
+            linePathEndPointX={linePathEndPointX}
+            linePathStartPointX={linePathStartPointX}
           />
-        </LineChartClipPath>
 
-        <LineChartPositionLabel
-          type="last"
-          font={positionLabelFont}
-          y={linePathEndPointY}
-          canvasWidth={config.width}
-          backgroundColor="black"
-          // TODO: pass formatter
-          label={`$${data[data.length - 1]?.value ?? 0}`}
-        />
+          <LineChartPositionLine
+            y={linePathEndPointY}
+            color="black"
+            width={chart.width}
+          />
 
-        <LineChartCrossHair
-          config={config}
-          chartWidth={chart.width}
-          crossHair={crossHair}
-          viewPortHeight={gridHeight}
-          linePath={animatedPath}
-          font={positionLabelFont}
-          linePathStartPointX={linePathStartPointX}
-          linePathEndPointX={linePathEndPointX}
-          {...interpolationProps}
-        />
+          <LineChartClipPath height={gridHeight} width={chart.width}>
+            <Path style="stroke" strokeWidth={2} path={animatedPath}>
+              <LinearGradient
+                start={vec(config.width / 2, 0)}
+                end={vec(config.width / 2, gridHeight)}
+                colors={config.lineColors}
+              />
+            </Path>
+            <LineChartPointer
+              x={linePathEndPointX}
+              y={linePathEndPointY}
+            />
+          </LineChartClipPath>
+
+          <LineChartPositionLabel
+            type="last"
+            y={linePathEndPointY}
+            canvasWidth={config.width}
+            backgroundColor="black"
+            // TODO: pass formatter
+            label={`$${data[data.length - 1]?.value ?? 0}`}
+          />
+
+          <LineChartCrossHair
+            config={config}
+            chartWidth={chart.width}
+            crossHair={crossHair}
+            viewPortHeight={gridHeight}
+            linePath={animatedPath}
+            linePathStartPointX={linePathStartPointX}
+            linePathEndPointX={linePathEndPointX}
+            {...interpolationProps}
+          />
+        </LineChartFontsProvider>
       </CanvasWithContext>
     </LineChartGestureDetector>
   );
