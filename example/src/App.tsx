@@ -7,12 +7,11 @@ import { data } from './data'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 const DEFAULT_HEIGHT = 345
-const ADDITIONAL_TOP_OFFSET = 10
 
 const getOHLCChartConfig = (wrapperHeight = DEFAULT_HEIGHT) => {
   return {
     width: Dimensions.get('window').width,
-    height: wrapperHeight - ADDITIONAL_TOP_OFFSET,
+    height: wrapperHeight,
     hLinesNumber: 3,
     hLinesOffset: 20,
     vLinesRange: { min: 4, max: 6 },

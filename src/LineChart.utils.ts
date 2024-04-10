@@ -104,7 +104,7 @@ export const getViewportVerticalMinMax = (
 		for (let i = 1; i < extremes.length; i++) {
 			const curExtreme = extremes[i]
 			const prevExtreme = extremes[i - 1]
-			if (!curExtreme || !prevExtreme) {
+			if (curExtreme === undefined || prevExtreme === undefined) {
 				break
 			}
 
