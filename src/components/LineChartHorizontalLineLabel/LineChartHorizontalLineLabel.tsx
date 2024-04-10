@@ -5,7 +5,7 @@ import { Text } from '@shopify/react-native-skia'
 
 import { useVerticalLabelValue } from '../../hooks'
 import { IInterpolationProps } from '../../LineChart.types'
-import { useLineChartFonts } from '../LineChartFontsContext'
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 interface ILineChartHorizontalLineLabelProps extends IInterpolationProps {
 	x: number
@@ -19,7 +19,7 @@ export const LineChartHorizontalLineLabel = ({
 	color,
 	...interpolationProps
 }: ILineChartHorizontalLineLabelProps) => {
-	const { gridLabelFont: font } = useLineChartFonts()
+	const { gridLabelFont: font } = useLineChartConfig()
 	const label = useVerticalLabelValue({
 		...interpolationProps,
 		y,

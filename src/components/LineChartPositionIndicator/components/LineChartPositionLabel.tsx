@@ -10,7 +10,7 @@ import {
 	TRIANGLE_WIDTH,
 } from '../constants'
 import { useDxByType } from '../hooks'
-import { useLineChartFonts } from '../../LineChartFontsContext'
+import { useLineChartConfig } from '../../LineChartConfigContext'
 
 interface ILineChartPositionLabelProps {
 	backgroundColor: string
@@ -29,7 +29,7 @@ export const LineChartPositionLabel = ({
 	type,
 	label,
 }: ILineChartPositionLabelProps) => {
-	const { positionLabelFont: font } = useLineChartFonts()
+	const { positionLabelFont: font } = useLineChartConfig()
 	const textWidth = useDerivedValue(() => {
 		return font.measureText(label).width
 	})

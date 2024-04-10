@@ -150,14 +150,20 @@ export const getViewportVerticalMinMax = (
 	}
 }
 
+// FixMe: remove ignores
 export const findMinMaxValue = (data: IDataPoint[]) => {
-	let min = data[0]?.value ?? 0
-	let max = data[0]?.value ?? 0
+	// @ts-ignore
+	let min = data[0].value
+	// @ts-ignore
+	let max = data[0].value
+
 	for (let i = 1; i < data.length; i++) {
-		if (data[i]?.value ?? 0 < min) {
+		// @ts-ignore
+		if (data[i].value < min) {
 			min = data[i]?.value ?? 0
 		}
-		if (data[i]?.value ?? 0 > max) {
+		// @ts-ignore
+		if (data[i]?.value > max) {
 			max = data[i]?.value ?? 0
 		}
 	}

@@ -5,7 +5,7 @@ import { Line, vec } from '@shopify/react-native-skia'
 
 import LineChartVerticalLineLabel from '../LineChartVerticalLineLabel'
 import { ITopBottomValue } from '../../LineChart.types'
-import { useLineChartFonts } from '../LineChartFontsContext'
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 interface ILineChartVerticalLineProps {
 	index: number
@@ -19,7 +19,6 @@ interface ILineChartVerticalLineProps {
 	labelOffset: ITopBottomValue
 	labelColor: string
 	lineColor: string
-	timeframe: number
 }
 
 export const LineChartVerticalLine = ({
@@ -34,9 +33,8 @@ export const LineChartVerticalLine = ({
 	labelOffset,
 	labelColor,
 	lineColor,
-	timeframe,
 }: ILineChartVerticalLineProps) => {
-	const { gridLabelFont: font } = useLineChartFonts()
+	const { gridLabelFont: font } = useLineChartConfig()
 	const top = 0
 	const labelAreaHeight = labelOffset.bottom + labelOffset.top + font.getSize()
 	const lineBottom = canvasHeight - labelAreaHeight
@@ -72,7 +70,6 @@ export const LineChartVerticalLine = ({
 				opacity={opacity}
 				font={font}
 				color={labelColor}
-				timeframe={timeframe}
 			/>
 		</>
 	)

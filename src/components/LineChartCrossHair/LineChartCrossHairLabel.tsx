@@ -5,7 +5,7 @@ import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 
 import { useVerticalLabelValue } from '../../hooks'
 import { IInterpolationProps } from '../../LineChart.types'
-import { useLineChartFonts } from '../LineChartFontsContext'
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 const LABEL_WRAPPER_HEIGHT = 16
 
@@ -19,7 +19,7 @@ export const LineChartCrossHairLabel = ({
 	y,
 	...interpolationProps
 }: ILineChartCrossHairLabelProps) => {
-	const { positionLabelFont: font } = useLineChartFonts()
+	const { positionLabelFont: font } = useLineChartConfig()
 	const crossHairValue = useVerticalLabelValue({
 		...interpolationProps,
 		y,

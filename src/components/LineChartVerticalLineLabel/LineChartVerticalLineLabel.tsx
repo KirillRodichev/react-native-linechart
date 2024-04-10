@@ -6,35 +6,7 @@ import {
 	useDerivedValue,
 } from 'react-native-reanimated'
 import { SkFont, Text } from '@shopify/react-native-skia'
-
-const formatTimestamp = (timestamp: number, timeframe: number) => {
-	'worklet'
-	const date = new Date(timestamp)
-	const format = (value: number) => value.toString().padStart(2, '0')
-
-	if (timeframe < 1000 * 60 * 60) {
-		const hours = date.getHours()
-		const minutes = date.getMinutes()
-
-		return `${format(hours)}:${format(minutes)}`
-	}
-
-	if (timeframe < 1000 * 60 * 60 * 24) {
-		const hours = date.getHours()
-		const minutes = date.getMinutes()
-		const months = date.getMonth() + 1
-		const days = date.getDate()
-
-		return `${format(months)}/${format(days)} ${format(hours)}:${format(
-			minutes
-		)}`
-	}
-
-	const months = date.getMonth() + 1
-	const days = date.getDate()
-
-	return `${format(months)}/${format(days)}`
-}
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 interface ILineChartVerticalLineLabelProps {
 	x: SharedValue<number>
@@ -46,7 +18,6 @@ interface ILineChartVerticalLineLabelProps {
 	dataEnd: number
 	font: SkFont
 	color: string
-	timeframe: number
 }
 
 export const LineChartVerticalLineLabel = ({
@@ -59,15 +30,16 @@ export const LineChartVerticalLineLabel = ({
 	dataStart,
 	font,
 	color,
-	timeframe,
 }: ILineChartVerticalLineLabelProps) => {
+	const { formatters: { formatTimestamp } } = useLineChartConfig()
+
 	const label = useDerivedValue(() => {
 		const interpolatedTimestamp = interpolate(
 			x.value,
 			[linePathStartPointX.value, linePathEndPointX.value],
 			[dataStart, dataEnd]
 		)
-		return formatTimestamp(interpolatedTimestamp, timeframe)
+		return formatTimestamp(interpolatedTimestamp)
 	})
 
 	const textX = useDerivedValue(() => {

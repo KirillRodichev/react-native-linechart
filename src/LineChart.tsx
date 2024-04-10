@@ -25,7 +25,7 @@ import {
   LineChartGestureDetector,
   LineChartGrid,
   LineChartPointer,
-  LineChartFontsProvider,
+  LineChartConfigProvider
 } from './components'
 import { H_LABEL_WIDTH } from './LineChart.constants';
 import {
@@ -66,6 +66,7 @@ import {
 export const LineChart = ({
   data,
   config,
+  formatters,
 }: ILineChartProps) => {
   const timestampAreaHeight =
     config.timestampLabelOffset.top +
@@ -79,7 +80,6 @@ export const LineChart = ({
     config.valueLabelOffset.left +
     config.valueLabelOffset.right;
   const chartWidth = config.width - valueAreaHeight;
-  const timeframe = (data[1]?.timestamp ?? 0) - (data[0]?.timestamp ?? 0);
   const { positionLabelFont, gridLabelFont } = config.fonts ?? {}
 
   const chart = {
@@ -279,14 +279,17 @@ export const LineChart = ({
       linePathEndPointX={linePathEndPointX}
     >
       <CanvasWithContext style={{ width: config.width, height: config.height }}>
-        <LineChartFontsProvider
+        <LineChartConfigProvider
           gridLabelFont={gridLabelFont}
           positionLabelFont={positionLabelFont}
+          formatters={{
+            formatTimestamp: formatters?.formatTimestamp,
+            formatValue: formatters?.formatValue,
+          }}
         >
           <LineChartGrid
             data={data}
             config={config}
-            timeframe={timeframe}
             everyRule={everyRule}
             gridHeight={gridHeight}
             chartWidth={chart.width}
@@ -336,7 +339,7 @@ export const LineChart = ({
             linePathEndPointX={linePathEndPointX}
             {...interpolationProps}
           />
-        </LineChartFontsProvider>
+        </LineChartConfigProvider>
       </CanvasWithContext>
     </LineChartGestureDetector>
   );

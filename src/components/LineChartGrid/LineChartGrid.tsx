@@ -19,7 +19,6 @@ interface ILineChartGridProps {
 	linePathBottomY: SharedValue<number>
 	gridHeight: number
 	chartWidth: number
-	timeframe: number
 }
 
 export const LineChartGrid = ({
@@ -33,7 +32,6 @@ export const LineChartGrid = ({
 	linePathStartPointX,
 	linePathEndPointX,
 	everyRule,
-	timeframe,
 }: ILineChartGridProps) => {
 	const dataStartVertical = data[0]?.timestamp ?? 0
 	const dataEndVertical = data[data.length - 1]?.timestamp ?? 0
@@ -55,7 +53,6 @@ export const LineChartGrid = ({
 							key={i}
 							// having data.length * 2 allows to have lines outside the chart's left,right borders
 							index={i - Math.ceil(data.length / 2)}
-							timeframe={timeframe}
 							everyRule={everyRule}
 							dVerticalLine={dVerticalLine}
 							linePathStartPointX={linePathStartPointX}

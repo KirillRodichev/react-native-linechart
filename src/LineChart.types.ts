@@ -48,9 +48,15 @@ export interface ILineChartConfig {
 	}
 }
 
+export interface ILineChartFormatters {
+	formatTimestamp: (timestamp: number) => string
+	formatValue: (value: number) => string
+}
+
 export interface ILineChartProps {
 	data: IDataPoint[]
 	config: ILineChartConfig
+	formatters: ILineChartFormatters
 	isDebug?: boolean
 }
 
@@ -67,3 +73,7 @@ export interface ICrossHair {
 }
 
 export type GestureModeType = 'inspect' | 'scroll'
+
+export type DeepPartial<T> = {
+	[K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
+}
