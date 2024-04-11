@@ -16,8 +16,9 @@ import {
 } from 'react-native-reanimated'
 import { getYForX, Path as RedashPath, parse } from 'react-native-redash'
 
-import { IInterpolationProps, ILineChartConfig, ICrossHair } from '../../LineChart.types';
+import { IInterpolationProps, ICrossHair } from '../../LineChart.types';
 import LineChartCrossHairLabel from './LineChartCrossHairLabel'
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 const BLACK_CIRCLE_R = 3
 const WHITE_CIRCLE_R = 5
@@ -27,7 +28,6 @@ interface ILineChartCrossHairProps extends IInterpolationProps {
 	chartWidth: number
 	crossHair: SharedValue<ICrossHair | null>
 	linePath: SharedValue<SkPath>
-	config: ILineChartConfig
 	// CrossHair pan range
 	linePathEndPointX: SharedValue<number>
 	linePathStartPointX: SharedValue<number>
@@ -38,7 +38,6 @@ export const LineChartCrossHair = ({
 	crossHair,
 	viewPortHeight,
 	linePath,
-	config,
 	linePathEndPointX,
 	linePathStartPointX,
 	...interpolationProps
@@ -46,6 +45,7 @@ export const LineChartCrossHair = ({
 	const [isVisible, setIsVisible] = useState(false)
 	const x = useSharedValue(0)
 	const y = useSharedValue(0)
+	const { config } = useLineChartConfig()
 
 	const parseLinePath = () => {
 		try {

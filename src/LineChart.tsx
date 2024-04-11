@@ -80,7 +80,6 @@ export const LineChart = ({
     config.valueLabelOffset.left +
     config.valueLabelOffset.right;
   const chartWidth = config.width - valueAreaHeight;
-  const { positionLabelFont, gridLabelFont } = config.fonts ?? {}
 
   const chart = {
     width: chartWidth,
@@ -280,8 +279,7 @@ export const LineChart = ({
     >
       <CanvasWithContext style={{ width: config.width, height: config.height }}>
         <LineChartConfigProvider
-          gridLabelFont={gridLabelFont}
-          positionLabelFont={positionLabelFont}
+          config={config}
           formatters={{
             formatTimestamp: formatters?.formatTimestamp,
             formatValue: formatters?.formatValue,
@@ -289,7 +287,6 @@ export const LineChart = ({
         >
           <LineChartGrid
             data={data}
-            config={config}
             everyRule={everyRule}
             gridHeight={gridHeight}
             chartWidth={chart.width}
@@ -330,7 +327,6 @@ export const LineChart = ({
           />
 
           <LineChartCrossHair
-            config={config}
             chartWidth={chart.width}
             crossHair={crossHair}
             viewPortHeight={gridHeight}

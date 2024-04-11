@@ -1,8 +1,14 @@
 import React, { createContext, PropsWithChildren, useContext, useMemo } from 'react'
-import { Platform } from 'react-native'
+import { Dimensions, Platform } from 'react-native'
 
-import { matchFont, SkFont } from '@shopify/react-native-skia'
-import { DeepPartial, ILineChartFormatters } from '../../LineChart.types'
+import { matchFont } from '@shopify/react-native-skia'
+
+import {
+	ILineChartConfig,
+	ILineChartFontsConfig,
+	ILineChartFormatters,
+	ILineChartGridConfig
+} from '../../LineChart.types'
 
 const fontFamily = Platform.select({ ios: "Helvetica", default: "serif" })
 const positionLabelFont = matchFont({
@@ -28,22 +34,45 @@ const formatValue = (value: number) => {
 	return value.toFixed(2)
 }
 
+interface ILineChartContextConfig extends ILineChartConfig {
+	fonts: ILineChartFontsConfig
+	grid: ILineChartGridConfig
+}
+
 interface ILineChartConfigContext {
-	positionLabelFont: SkFont,
-	gridLabelFont: SkFont
+	config: ILineChartContextConfig
 	formatters: ILineChartFormatters
 }
 
 interface ILineChartConfigProviderProps {
-	positionLabelFont?: SkFont,
-	gridLabelFont?: SkFont
 	formatters: Partial<ILineChartFormatters>
+	config: ILineChartConfig
 }
 
-const defaultValue = {
-	positionLabelFont,
-	gridLabelFont,
+const defaultConfig: ILineChartContextConfig = {
+	width: Dimensions.get('window').width,
+	height: 350,
+	hLinesNumber: 3,
+	hLinesOffset: 20,
+	vLinesRange: { min: 4, max: 6 },
+	labelSize: 9,
+	timestampLabelOffset: { top: 7, bottom: 10 }, // 4 + 3, 7 + 3 to compensate line height
+	lineColors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+	labelColor: '#8A8B90',
+	valueLabelOffset: { left: 8, right: 8 },
+	fonts: {
+		positionLabelFont,
+		gridLabelFont,
+	},
+	grid: {
+		lineColor: '#E4E4E5',
+		lineWidth: 0.5,
+	},
+}
+
+const defaultValue: ILineChartConfigContext = {
 	formatters: { formatTimestamp, formatValue },
+	config: defaultConfig
 }
 
 const LineChartConfigContext = createContext<ILineChartConfigContext>(defaultValue)
@@ -51,19 +80,18 @@ const LineChartConfigContext = createContext<ILineChartConfigContext>(defaultVal
 export const useLineChartConfig = () => useContext(LineChartConfigContext)
 
 export const LineChartConfigProvider = ({
+	// config,
 	children,
 	formatters,
-	gridLabelFont,
-	positionLabelFont,
-}: PropsWithChildren<DeepPartial<ILineChartConfigProviderProps>>) => {
+}: PropsWithChildren<ILineChartConfigProviderProps>) => {
 	const value = useMemo(() => ({
-		positionLabelFont: positionLabelFont ?? defaultValue.positionLabelFont,
-		gridLabelFont: gridLabelFont ?? defaultValue.gridLabelFont,
 		formatters: {
 			formatTimestamp: formatters?.formatTimestamp ?? formatTimestamp,
 			formatValue: formatters?.formatValue ?? formatValue,
-		}
+		},
+		config: defaultConfig, // TODO: merge defaultConfig and config
 	}), [])
+
 	return (
 		<LineChartConfigContext.Provider value={value}>
 			{children}

@@ -19,7 +19,8 @@ export const LineChartHorizontalLineLabel = ({
 	color,
 	...interpolationProps
 }: ILineChartHorizontalLineLabelProps) => {
-	const { gridLabelFont: font } = useLineChartConfig()
+	const { config } = useLineChartConfig()
+	const { fonts: { gridLabelFont: font } } = config
 	const label = useVerticalLabelValue({
 		...interpolationProps,
 		y,

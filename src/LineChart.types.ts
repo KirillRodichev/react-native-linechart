@@ -33,7 +33,6 @@ export interface ILineChartConfig {
 	hLinesNumber: number
 	hLinesOffset: number
 	vLinesRange: IMinMaxValue
-	gridColor: string
 
 	labelColor: string
 	labelSize: number
@@ -42,10 +41,18 @@ export interface ILineChartConfig {
 
 	lineColors: GradientProps['colors']
 
-	fonts?: {
-		positionLabelFont?: SkFont
-		gridLabelFont?: SkFont
-	}
+	fonts?: Partial<ILineChartFontsConfig>
+	grid?: Partial<ILineChartGridConfig>
+}
+
+export interface ILineChartFontsConfig {
+	gridLabelFont: SkFont
+	positionLabelFont: SkFont
+}
+
+export interface ILineChartGridConfig {
+	lineColor: string
+	lineWidth: number
 }
 
 export interface ILineChartFormatters {
@@ -56,8 +63,7 @@ export interface ILineChartFormatters {
 export interface ILineChartProps {
 	data: IDataPoint[]
 	config: ILineChartConfig
-	formatters: ILineChartFormatters
-	isDebug?: boolean
+	formatters?: Partial<ILineChartFormatters>
 }
 
 export interface IInterpolationProps {
@@ -73,7 +79,3 @@ export interface ICrossHair {
 }
 
 export type GestureModeType = 'inspect' | 'scroll'
-
-export type DeepPartial<T> = {
-	[K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
-}

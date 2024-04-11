@@ -19,7 +19,8 @@ export const LineChartCrossHairLabel = ({
 	y,
 	...interpolationProps
 }: ILineChartCrossHairLabelProps) => {
-	const { positionLabelFont: font } = useLineChartConfig()
+	const { config } = useLineChartConfig()
+	const { fonts: { positionLabelFont: font } } = config
 	const crossHairValue = useVerticalLabelValue({
 		...interpolationProps,
 		y,

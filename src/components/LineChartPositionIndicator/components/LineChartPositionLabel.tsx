@@ -29,7 +29,8 @@ export const LineChartPositionLabel = ({
 	type,
 	label,
 }: ILineChartPositionLabelProps) => {
-	const { positionLabelFont: font } = useLineChartConfig()
+	const { config } = useLineChartConfig()
+	const { fonts: { positionLabelFont: font } } = config
 	const textWidth = useDerivedValue(() => {
 		return font.measureText(label).width
 	})

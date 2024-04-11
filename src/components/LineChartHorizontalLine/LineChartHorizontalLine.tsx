@@ -3,26 +3,26 @@ import React from 'react'
 import { useDerivedValue } from 'react-native-reanimated'
 import { Line, vec } from '@shopify/react-native-skia'
 
-import { IInterpolationProps, ILeftRightValue } from '../../LineChart.types'
+import { IInterpolationProps } from '../../LineChart.types'
 import { H_LABEL_WIDTH } from '../../LineChart.constants'
 import LineChartHorizontalLineLabel from '../LineChartHorizontalLineLabel'
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 interface ILineChartHorizontalLineProps extends IInterpolationProps {
 	y: number
-	canvasWidth: number
-	labelColor: string
-	lineColor: string
-	labelOffset: ILeftRightValue
 }
 
 export const LineChartHorizontalLine = ({
 	y,
-	canvasWidth,
-	labelColor,
-	lineColor,
-	labelOffset,
 	...interpolationProps
 }: ILineChartHorizontalLineProps) => {
+	const { config } = useLineChartConfig()
+	const {
+		labelColor,
+		width: canvasWidth,
+		grid: { lineColor },
+		valueLabelOffset: labelOffset,
+	} = config
 	const left = 0
 	const rightLabel = canvasWidth - labelOffset.right
 	const rightLine =

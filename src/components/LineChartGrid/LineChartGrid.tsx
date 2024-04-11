@@ -2,14 +2,14 @@ import React from 'react'
 
 import { SharedValue } from 'react-native-reanimated'
 
-import { IDataPoint, ILineChartConfig } from '../../LineChart.types'
+import { IDataPoint } from '../../LineChart.types'
 import { calcHLinesShift, findMinMaxValue } from '../../LineChart.utils'
 import { LineChartVerticalLine } from '../LineChartVerticalLine'
 import { LineChartHorizontalLine } from '../LineChartHorizontalLine'
 import LineChartClipPath from '../LineChartClipPath'
+import { useLineChartConfig } from '../LineChartConfigContext'
 
 interface ILineChartGridProps {
-  config: ILineChartConfig;
 	data: IDataPoint[]
 	everyRule: SharedValue<number>
 	dVerticalLine: SharedValue<number>
@@ -22,7 +22,6 @@ interface ILineChartGridProps {
 }
 
 export const LineChartGrid = ({
-	config,
 	data,
 	dVerticalLine,
 	gridHeight,
@@ -33,6 +32,7 @@ export const LineChartGrid = ({
 	linePathEndPointX,
 	everyRule,
 }: ILineChartGridProps) => {
+	const { config } = useLineChartConfig()
 	const dataStartVertical = data[0]?.timestamp ?? 0
 	const dataEndVertical = data[data.length - 1]?.timestamp ?? 0
 
@@ -59,10 +59,6 @@ export const LineChartGrid = ({
 							linePathEndPointX={linePathEndPointX}
 							dataStart={dataStartVertical}
 							dataEnd={dataEndVertical}
-							canvasHeight={config.height}
-							labelOffset={config.timestampLabelOffset}
-							labelColor={config.labelColor}
-							lineColor={config.gridColor}
 						/>
 					)
 				})}
@@ -76,10 +72,6 @@ export const LineChartGrid = ({
 						dataStart={globalMinMaxValues.max}
 						linePathTopY={linePathTopY}
 						linePathBottomY={linePathBottomY}
-						canvasWidth={config.width}
-						labelColor={config.labelColor}
-						lineColor={config.gridColor}
-						labelOffset={config.valueLabelOffset}
 					/>
 				)
 			})}

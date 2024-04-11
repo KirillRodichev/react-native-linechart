@@ -4,7 +4,6 @@ import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 import { Line, vec } from '@shopify/react-native-skia'
 
 import LineChartVerticalLineLabel from '../LineChartVerticalLineLabel'
-import { ITopBottomValue } from '../../LineChart.types'
 import { useLineChartConfig } from '../LineChartConfigContext'
 
 interface ILineChartVerticalLineProps {
@@ -15,10 +14,6 @@ interface ILineChartVerticalLineProps {
 	linePathEndPointX: SharedValue<number>
 	dataStart: number
 	dataEnd: number
-	canvasHeight: number
-	labelOffset: ITopBottomValue
-	labelColor: string
-	lineColor: string
 }
 
 export const LineChartVerticalLine = ({
@@ -29,12 +24,15 @@ export const LineChartVerticalLine = ({
 	linePathEndPointX,
 	dataEnd,
 	dataStart,
-	canvasHeight,
-	labelOffset,
-	labelColor,
-	lineColor,
 }: ILineChartVerticalLineProps) => {
-	const { gridLabelFont: font } = useLineChartConfig()
+	const { config } = useLineChartConfig()
+	const {
+		labelColor,
+		grid: { lineColor },
+		height: canvasHeight,
+		fonts: { gridLabelFont: font },
+		timestampLabelOffset: labelOffset,
+	} = config
 	const top = 0
 	const labelAreaHeight = labelOffset.bottom + labelOffset.top + font.getSize()
 	const lineBottom = canvasHeight - labelAreaHeight
