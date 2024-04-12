@@ -66,16 +66,14 @@ export interface ILineChartProps {
 	formatters?: Partial<ILineChartFormatters>
 }
 
-export interface IInterpolationProps {
-	dataStart: number
-	dataEnd: number
-	linePathTopY: SharedValue<number>
-	linePathBottomY: SharedValue<number>
-}
-
 export interface ICrossHair {
 	x: number
 	y: number
 }
 
 export type GestureModeType = 'inspect' | 'scroll'
+
+export interface ILineChartInterpolationProps {
+	dataRange: [number, number]
+	coordsRange: [SharedValue<number>, SharedValue<number>]
+}

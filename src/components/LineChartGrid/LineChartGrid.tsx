@@ -2,8 +2,8 @@ import React from 'react'
 
 import { SharedValue } from 'react-native-reanimated'
 
-import { IDataPoint } from '../../LineChart.types'
-import { calcHLinesShift, findMinMaxValue } from '../../LineChart.utils'
+import { IDataPoint, ILineChartInterpolationProps } from '../../LineChart.types'
+import { calcHLinesShift } from '../../LineChart.utils'
 import { LineChartVerticalLine } from '../LineChartVerticalLine'
 import { LineChartHorizontalLine } from '../LineChartHorizontalLine'
 import LineChartClipPath from '../LineChartClipPath'
@@ -15,10 +15,9 @@ interface ILineChartGridProps {
 	dVerticalLine: SharedValue<number>
 	linePathStartPointX: SharedValue<number>
 	linePathEndPointX: SharedValue<number>
-	linePathTopY: SharedValue<number>
-	linePathBottomY: SharedValue<number>
 	gridHeight: number
 	chartWidth: number
+	interpolationProps: ILineChartInterpolationProps
 }
 
 export const LineChartGrid = ({
@@ -26,17 +25,14 @@ export const LineChartGrid = ({
 	dVerticalLine,
 	gridHeight,
 	chartWidth,
-	linePathBottomY,
-	linePathTopY,
 	linePathStartPointX,
 	linePathEndPointX,
 	everyRule,
+	interpolationProps,
 }: ILineChartGridProps) => {
 	const { config } = useLineChartConfig()
 	const dataStartVertical = data[0]?.timestamp ?? 0
 	const dataEndVertical = data[data.length - 1]?.timestamp ?? 0
-
-	const globalMinMaxValues = findMinMaxValue(data)
 
 	const hLinesShift = calcHLinesShift(
 		gridHeight,
@@ -68,10 +64,7 @@ export const LineChartGrid = ({
 					<LineChartHorizontalLine
 						key={i}
 						y={i * hLinesShift + config.hLinesOffset}
-						dataEnd={globalMinMaxValues.min}
-						dataStart={globalMinMaxValues.max}
-						linePathTopY={linePathTopY}
-						linePathBottomY={linePathBottomY}
+						interpolationProps={interpolationProps}
 					/>
 				)
 			})}

@@ -38,6 +38,7 @@ import {
   LineChartPositionLabel,
   LineChartPositionLine,
 } from './components/LineChartPositionIndicator/components';
+import { ILineChartInterpolationProps } from './LineChart.types'
 
 /**
  * Main concepts description:
@@ -233,11 +234,9 @@ export const LineChart = ({
     }
   );
 
-  const interpolationProps = {
-    linePathTopY,
-    linePathBottomY,
-    dataEnd: globalMinMaxValues.min,
-    dataStart: globalMinMaxValues.max,
+  const interpolationProps: ILineChartInterpolationProps = {
+    dataRange: [globalMinMaxValues.max, globalMinMaxValues.min],
+    coordsRange: [linePathTopY, linePathBottomY],
   };
 
   useUpdateLinePathOnLastPointChange({
@@ -277,10 +276,9 @@ export const LineChart = ({
             gridHeight={gridHeight}
             chartWidth={chart.width}
             dVerticalLine={dVerticalLine}
-            linePathTopY={linePathTopY}
-            linePathBottomY={linePathBottomY}
             linePathEndPointX={linePathEndPointX}
             linePathStartPointX={linePathStartPointX}
+            interpolationProps={interpolationProps}
           />
 
           <LineChartPositionLine
@@ -319,7 +317,7 @@ export const LineChart = ({
             linePath={animatedPath}
             linePathStartPointX={linePathStartPointX}
             linePathEndPointX={linePathEndPointX}
-            {...interpolationProps}
+            interpolationProps={interpolationProps}
           />
         </LineChartConfigProvider>
       </CanvasWithContext>
