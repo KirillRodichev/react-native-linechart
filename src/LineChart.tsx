@@ -202,6 +202,10 @@ export const LineChart = ({
       linePathEndPointX.value = path.getLastPt().x;
       linePathEndPointY.value = path.getLastPt().y;
       dPathPoint.value = path.getPoint(101).x - path.getPoint(100).x;
+
+      const { y, height } = path.getBounds();
+      linePathTopY.value = y;
+      linePathBottomY.value = height + y;
     };
 
     path.addPath(linePath.value);
@@ -209,24 +213,6 @@ export const LineChart = ({
     adjustToLocalExtremesTransformation();
     updatePathValues();
   });
-
-  useAnimatedReaction(
-    () => animatedPath.value,
-    (prepared, previous) => {
-      const preparedBounds = prepared.getBounds();
-      const previousBounds = previous?.getBounds();
-      if (
-        preparedBounds.y === previousBounds?.y &&
-        preparedBounds.height === previousBounds?.height
-      ) {
-        return;
-      }
-
-      const { y, height } = preparedBounds;
-      linePathTopY.value = y;
-      linePathBottomY.value = height + y;
-    }
-  );
 
   const getEveryRule = (linesNumber: number, linesLimit: number) => {
     'worklet';
