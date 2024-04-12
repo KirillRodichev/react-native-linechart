@@ -40,6 +40,8 @@ import {
 } from './components/LineChartPositionIndicator/components';
 import { ILineChartInterpolationProps } from './LineChart.types'
 
+const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 }
+
 /**
  * Main concepts description:
  *
@@ -68,6 +70,7 @@ export const LineChart = ({
   data,
   config,
   formatters,
+  scale: scaleConfig = DEFAULT_SCALE_CONFIG
 }: ILineChartProps) => {
   const timestampAreaHeight =
     config.timestampLabelOffset.top +
@@ -146,13 +149,10 @@ export const LineChart = ({
     'worklet';
     const canScale = () => {
       const pathWidth = path.getBounds().width;
-      if (
-        (pathWidth < chart.width && scale.value < 1) ||
-        (pathWidth > chart.width * 2 && scale.value > 1)
-      ) {
-        return false;
-      }
-      return true;
+      const { min, max } = scaleConfig
+      const exceededScaleDown = pathWidth < chart.width * min && scale.value < 1
+      const exceededScaleUp = pathWidth > chart.width * max && scale.value > 1
+      return !exceededScaleDown && !exceededScaleUp
     };
 
     const gestureTransformation = () => {

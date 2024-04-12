@@ -64,6 +64,7 @@ export interface ILineChartProps {
 	data: IDataPoint[]
 	config: ILineChartConfig
 	formatters?: Partial<ILineChartFormatters>
+	scale?: { min: number, max: number }
 }
 
 export interface ICrossHair {
