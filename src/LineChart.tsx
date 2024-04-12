@@ -7,16 +7,13 @@ import {
   usePathValue,
   vec,
 } from '@shopify/react-native-skia';
-import {
-  useAnimatedReaction,
-  useDerivedValue,
-  useSharedValue,
-} from 'react-native-reanimated';
+import { useSharedValue, useDerivedValue } from 'react-native-reanimated';
 
 import {
+  useVerticalLinesRules,
   useFindLocalExtremeIndexes,
   useUpdateLinePathOnLastPointChange,
-} from './hooks';
+} from './hooks'
 import type { ILineChartProps, ICrossHair } from './LineChart.types';
 import {
   CanvasWithContext,
@@ -79,11 +76,11 @@ export const LineChart = ({
   const chartHeight =
     config.height - timestampAreaHeight - config.hLinesOffset * 2;
   const gridHeight = config.height - timestampAreaHeight;
-  const valueAreaHeight =
+  const valueAreaWidth =
     H_LABEL_WIDTH +
     config.valueLabelOffset.left +
     config.valueLabelOffset.right;
-  const chartWidth = config.width - valueAreaHeight;
+  const chartWidth = config.width - valueAreaWidth;
 
   const chart = {
     width: chartWidth,
@@ -115,19 +112,6 @@ export const LineChart = ({
   const linePathTopY = useSharedValue(linePath.value.getBounds().y);
   const linePathBottomY = useSharedValue(linePath.value.getBounds().height);
 
-  const dPathPoint = useSharedValue(
-    linePath.value.getPoint(101).x - linePath.value.getPoint(100).x
-  );
-  const pathToDataLengthRatio = Math.ceil(
-    initialPath.countPoints() / data.length
-  );
-  const dVerticalLine = useDerivedValue(
-    () => dPathPoint.value * pathToDataLengthRatio
-  );
-  const linesPerViewportCount = useDerivedValue(
-    () => config.width / dVerticalLine.value
-  );
-
   const maxPointDebug = useSharedValue(linePath.value.getPoint(0));
   const minPointDebug = useSharedValue(linePath.value.getPoint(0));
 
@@ -144,6 +128,17 @@ export const LineChart = ({
       crossHair.value !== null
     );
   });
+
+  const {
+    everyRule,
+    dVerticalLine,
+    updateVerticalLinesRule,
+  } = useVerticalLinesRules({
+    data,
+    config,
+    linePath,
+    pointsCount: initialPath.countPoints(),
+  })
 
   const animatedPath = usePathValue((path) => {
     'worklet';
@@ -199,10 +194,11 @@ export const LineChart = ({
     };
 
     const updatePathValues = () => {
+      updateVerticalLinesRule(path);
+
       linePathStartPointX.value = path.getPoint(0).x;
       linePathEndPointX.value = path.getLastPt().x;
       linePathEndPointY.value = path.getLastPt().y;
-      dPathPoint.value = path.getPoint(101).x - path.getPoint(100).x;
 
       const { y, height } = path.getBounds();
       linePathTopY.value = y;
@@ -214,25 +210,6 @@ export const LineChart = ({
     adjustToLocalExtremesTransformation();
     updatePathValues();
   });
-
-  const getEveryRule = (linesNumber: number, linesLimit: number) => {
-    'worklet';
-    return Math.ceil(linesNumber / linesLimit);
-  };
-
-  const everyRule = useSharedValue(
-    getEveryRule(linesPerViewportCount.value, config.vLinesRange.max)
-  );
-
-  useAnimatedReaction(
-    () => linesPerViewportCount.value,
-    (linesNumber) => {
-      const every = getEveryRule(linesNumber, config.vLinesRange.max);
-      if (every >= 1) {
-        everyRule.value = every;
-      }
-    }
-  );
 
   const interpolationProps: ILineChartInterpolationProps = {
     dataRange: [globalMinMaxValues.max, globalMinMaxValues.min],
