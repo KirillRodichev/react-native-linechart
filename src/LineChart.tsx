@@ -23,6 +23,7 @@ import {
   LineChartGrid,
   LineChartPointer,
   LineChartConfigProvider,
+  LineChartAddon,
 } from './components';
 import { H_LABEL_WIDTH } from './LineChart.constants';
 import {
@@ -66,6 +67,7 @@ const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 export const LineChart = ({
   data,
   config,
+  addons,
   formatters,
   scale: scaleConfig = DEFAULT_SCALE_CONFIG,
 }: ILineChartProps) => {
@@ -281,6 +283,14 @@ export const LineChart = ({
             // TODO: pass formatter
             label={`$${data[data.length - 1]?.value ?? 0}`}
           />
+
+          {addons?.map((addon, index) => (
+            <LineChartAddon
+              key={index}
+              addon={addon}
+              interpolationProps={interpolationProps}
+            />
+          ))}
 
           <LineChartCrossHair
             chartWidth={chart.width}

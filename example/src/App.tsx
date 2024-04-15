@@ -1,10 +1,12 @@
 import React from 'react';
 import {Dimensions, SafeAreaView, StyleSheet} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SharedValue} from 'react-native-reanimated';
+import {Circle} from '@shopify/react-native-skia';
 
 import {LineChart} from 'react-native-linechart';
 
 import {data} from './data';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const DEFAULT_HEIGHT = 345;
 
@@ -24,13 +26,27 @@ const getOHLCChartConfig = (wrapperHeight = DEFAULT_HEIGHT) => {
   };
 };
 
+const AddonExample = ({
+  x,
+  y,
+}: {
+  x: SharedValue<number>;
+  y: SharedValue<number>;
+}) => {
+  return <Circle cx={x} cy={y} r={5} color="red" />;
+};
+
 function App(): React.JSX.Element {
   const chartConfig = getOHLCChartConfig();
 
   return (
     <GestureHandlerRootView style={styles.handlerWrapper}>
       <SafeAreaView style={styles.wrapper}>
-        <LineChart data={data} config={chartConfig} />
+        <LineChart
+          data={data}
+          config={chartConfig}
+          addons={[{point: {value: 1, timestamp: 1}, Addon: AddonExample}]}
+        />
       </SafeAreaView>
     </GestureHandlerRootView>
   );

@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { GradientProps, SkFont } from '@shopify/react-native-skia';
 import { SharedValue } from 'react-native-reanimated';
 
@@ -65,6 +66,12 @@ export interface ILineChartProps {
   config: ILineChartConfig;
   formatters?: Partial<ILineChartFormatters>;
   scale?: { min: number; max: number };
+  addons?: ILineChartAddon[];
+}
+
+export interface ILineChartAddon {
+  point: IDataPoint;
+  Addon: FC<{ x: SharedValue<number>; y: SharedValue<number> }>;
 }
 
 export interface ICrossHair {
