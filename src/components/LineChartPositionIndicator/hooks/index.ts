@@ -1,1 +1,1 @@
-export * from './useDxByType'
+export * from './useDxByType';

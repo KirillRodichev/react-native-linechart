@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 import {
   LinearGradient,
@@ -13,7 +13,7 @@ import {
   useVerticalLinesRules,
   useFindLocalExtremeIndexes,
   useUpdateLinePathOnLastPointChange,
-} from './hooks'
+} from './hooks';
 import type { ILineChartProps, ICrossHair } from './LineChart.types';
 import {
   CanvasWithContext,
@@ -22,8 +22,8 @@ import {
   LineChartGestureDetector,
   LineChartGrid,
   LineChartPointer,
-  LineChartConfigProvider
-} from './components'
+  LineChartConfigProvider,
+} from './components';
 import { H_LABEL_WIDTH } from './LineChart.constants';
 import {
   findMinMaxValue,
@@ -35,9 +35,9 @@ import {
   LineChartPositionLabel,
   LineChartPositionLine,
 } from './components/LineChartPositionIndicator/components';
-import { ILineChartInterpolationProps } from './LineChart.types'
+import { ILineChartInterpolationProps } from './LineChart.types';
 
-const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 }
+const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 
 /**
  * Main concepts description:
@@ -67,7 +67,7 @@ export const LineChart = ({
   data,
   config,
   formatters,
-  scale: scaleConfig = DEFAULT_SCALE_CONFIG
+  scale: scaleConfig = DEFAULT_SCALE_CONFIG,
 }: ILineChartProps) => {
   const timestampAreaHeight =
     config.timestampLabelOffset.top +
@@ -129,25 +129,23 @@ export const LineChart = ({
     );
   });
 
-  const {
-    everyRule,
-    dVerticalLine,
-    updateVerticalLinesRule,
-  } = useVerticalLinesRules({
-    data,
-    config,
-    linePath,
-    pointsCount: initialPath.countPoints(),
-  })
+  const { everyRule, dVerticalLine, updateVerticalLinesRule } =
+    useVerticalLinesRules({
+      data,
+      config,
+      linePath,
+      pointsCount: initialPath.countPoints(),
+    });
 
   const animatedPath = usePathValue((path) => {
     'worklet';
     const canScale = () => {
       const pathWidth = path.getBounds().width;
-      const { min, max } = scaleConfig
-      const exceededScaleDown = pathWidth < chart.width * min && scale.value < 1
-      const exceededScaleUp = pathWidth > chart.width * max && scale.value > 1
-      return !exceededScaleDown && !exceededScaleUp
+      const { min, max } = scaleConfig;
+      const exceededScaleDown =
+        pathWidth < chart.width * min && scale.value < 1;
+      const exceededScaleUp = pathWidth > chart.width * max && scale.value > 1;
+      return !exceededScaleDown && !exceededScaleUp;
     };
 
     const gestureTransformation = () => {
@@ -272,10 +270,7 @@ export const LineChart = ({
                 colors={config.lineColors}
               />
             </Path>
-            <LineChartPointer
-              x={linePathEndPointX}
-              y={linePathEndPointY}
-            />
+            <LineChartPointer x={linePathEndPointX} y={linePathEndPointY} />
           </LineChartClipPath>
 
           <LineChartPositionLabel

@@ -1,3 +1,3 @@
-import LineChartHorizontalLine from './LineChartHorizontalLine'
-export * from './LineChartHorizontalLine'
-export default LineChartHorizontalLine
+import LineChartHorizontalLine from './LineChartHorizontalLine';
+export * from './LineChartHorizontalLine';
+export default LineChartHorizontalLine;

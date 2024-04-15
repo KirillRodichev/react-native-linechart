@@ -1,3 +1,3 @@
-import LineChartVerticalLineLabel from './LineChartVerticalLineLabel'
-export * from './LineChartVerticalLineLabel'
-export default LineChartVerticalLineLabel
+import LineChartVerticalLineLabel from './LineChartVerticalLineLabel';
+export * from './LineChartVerticalLineLabel';
+export default LineChartVerticalLineLabel;

@@ -1,3 +1,3 @@
-import LineChartPointer from './LineChartPointer'
-export * from './LineChartPointer'
-export default LineChartPointer
+import LineChartPointer from './LineChartPointer';
+export * from './LineChartPointer';
+export default LineChartPointer;

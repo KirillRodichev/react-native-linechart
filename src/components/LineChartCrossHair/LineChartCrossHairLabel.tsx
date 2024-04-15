@@ -1,46 +1,48 @@
-import React from 'react'
+import React from 'react';
 
-import { Text } from '@shopify/react-native-skia'
-import { SharedValue, useDerivedValue } from 'react-native-reanimated'
+import { Text } from '@shopify/react-native-skia';
+import { SharedValue, useDerivedValue } from 'react-native-reanimated';
 
-import { useVerticalLabelValue } from '../../hooks'
-import { ILineChartInterpolationProps } from '../../LineChart.types'
-import { useLineChartConfig } from '../LineChartConfigContext'
+import { useVerticalLabelValue } from '../../hooks';
+import { ILineChartInterpolationProps } from '../../LineChart.types';
+import { useLineChartConfig } from '../LineChartConfigContext';
 
-const LABEL_WRAPPER_HEIGHT = 16
+const LABEL_WRAPPER_HEIGHT = 16;
 
 interface ILineChartCrossHairLabelProps {
-	x: SharedValue<number>
-	y: SharedValue<number>
-	interpolationProps: ILineChartInterpolationProps
+  x: SharedValue<number>;
+  y: SharedValue<number>;
+  interpolationProps: ILineChartInterpolationProps;
 }
 
 export const LineChartCrossHairLabel = ({
-	x,
-	y,
-	interpolationProps
+  x,
+  y,
+  interpolationProps,
 }: ILineChartCrossHairLabelProps) => {
-	const { config } = useLineChartConfig()
-	const { fonts: { positionLabelFont: font } } = config
-	const crossHairValue = useVerticalLabelValue({
-		interpolationProps,
-		y,
-	})
+  const { config } = useLineChartConfig();
+  const {
+    fonts: { positionLabelFont: font },
+  } = config;
+  const crossHairValue = useVerticalLabelValue({
+    interpolationProps,
+    y,
+  });
 
-	const textX = useDerivedValue(() => {
-		const textWidth = font.measureText(crossHairValue.value).width
-		return x.value - textWidth / 2
-	})
+  const textX = useDerivedValue(() => {
+    const textWidth = font.measureText(crossHairValue.value).width;
+    return x.value - textWidth / 2;
+  });
 
-	return (
-		<Text
-			x={textX}
-			y={LABEL_WRAPPER_HEIGHT}
-			font={font}
-			text={crossHairValue}
-			color="black"
-		/>
-	)
-}
+  return (
+    <Text
+      x={textX}
+      y={LABEL_WRAPPER_HEIGHT}
+      font={font}
+      text={crossHairValue}
+      color="black"
+    />
+  );
+};
 
-export default LineChartCrossHairLabel
+export default LineChartCrossHairLabel;

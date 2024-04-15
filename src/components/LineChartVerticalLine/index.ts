@@ -1,3 +1,3 @@
-import LineChartVerticalLine from './LineChartVerticalLine'
-export * from './LineChartVerticalLine'
-export default LineChartVerticalLine
+import LineChartVerticalLine from './LineChartVerticalLine';
+export * from './LineChartVerticalLine';
+export default LineChartVerticalLine;

@@ -1,2 +1,2 @@
-export * from './LineChartPositionLabel'
-export * from './LineChartPositionLine'
+export * from './LineChartPositionLabel';
+export * from './LineChartPositionLine';

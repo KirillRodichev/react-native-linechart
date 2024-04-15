@@ -1,1 +1,1 @@
-export * from './useAnimatedPulsingValues'
+export * from './useAnimatedPulsingValues';

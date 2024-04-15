@@ -1,1 +1,1 @@
-export const H_LABEL_WIDTH = 41
+export const H_LABEL_WIDTH = 41;

@@ -1,3 +1,3 @@
-import CanvasWithContext from './CanvasWithContext'
-export * from './CanvasWithContext'
-export default CanvasWithContext
+import CanvasWithContext from './CanvasWithContext';
+export * from './CanvasWithContext';
+export default CanvasWithContext;
