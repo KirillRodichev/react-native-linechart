@@ -1,21 +1,30 @@
 import React from 'react';
+
 import {
   ILineChartAddon,
   ILineChartInterpolationProps,
 } from '../../LineChart.types';
-import { useSharedValue } from 'react-native-reanimated';
+import { useCoordByValue } from '../../hooks';
 
 interface ILineChartAddonProps {
   addon: ILineChartAddon;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationPropsY: ILineChartInterpolationProps;
+  interpolationPropsX: ILineChartInterpolationProps;
 }
 
 export const LineChartAddon = ({
   addon: { point, Addon },
-  interpolationProps,
+  interpolationPropsY,
+  interpolationPropsX,
 }: ILineChartAddonProps) => {
-  const x = useSharedValue(100);
-  const y = useSharedValue(100);
+  const y = useCoordByValue({
+    value: point.value,
+    interpolationProps: interpolationPropsY,
+  });
+  const x = useCoordByValue({
+    value: point.timestamp,
+    interpolationProps: interpolationPropsX,
+  });
 
   return <Addon x={x} y={y} />;
 };

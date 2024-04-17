@@ -216,6 +216,11 @@ export const LineChart = ({
     coordsRange: [linePathTopY, linePathBottomY],
   };
 
+  const interpolationPropsX: ILineChartInterpolationProps = {
+    dataRange: [data[0]?.timestamp ?? 0, data[data.length - 1]?.timestamp ?? 0],
+    coordsRange: [linePathStartPointX, linePathEndPointX],
+  };
+
   useUpdateLinePathOnLastPointChange({
     data,
     linePath,
@@ -288,7 +293,8 @@ export const LineChart = ({
             <LineChartAddon
               key={index}
               addon={addon}
-              interpolationProps={interpolationProps}
+              interpolationPropsY={interpolationProps}
+              interpolationPropsX={interpolationPropsX}
             />
           ))}
 

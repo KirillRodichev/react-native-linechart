@@ -36,6 +36,11 @@ const AddonExample = ({
   return <Circle cx={x} cy={y} r={5} color="red" />;
 };
 
+const point = {
+  value: data[10]?.value ?? 0,
+  timestamp: data[10]?.timestamp ?? 0,
+};
+
 function App(): React.JSX.Element {
   const chartConfig = getLineChartConfig();
 
@@ -45,7 +50,7 @@ function App(): React.JSX.Element {
         <LineChart
           data={data}
           config={chartConfig}
-          addons={[{point: {value: 1, timestamp: 1}, Addon: AddonExample}]}
+          addons={[{point, Addon: AddonExample}]}
         />
       </SafeAreaView>
     </GestureHandlerRootView>
