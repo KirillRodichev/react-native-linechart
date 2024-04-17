@@ -8,7 +8,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const DEFAULT_HEIGHT = 345;
 
-const getOHLCChartConfig = (wrapperHeight = DEFAULT_HEIGHT) => {
+const getLineChartConfig = (wrapperHeight = DEFAULT_HEIGHT) => {
   return {
     width: Dimensions.get('window').width,
     height: wrapperHeight,
@@ -25,7 +25,7 @@ const getOHLCChartConfig = (wrapperHeight = DEFAULT_HEIGHT) => {
 };
 
 function App(): React.JSX.Element {
-  const chartConfig = getOHLCChartConfig();
+  const chartConfig = getLineChartConfig();
 
   return (
     <GestureHandlerRootView style={styles.handlerWrapper}>
