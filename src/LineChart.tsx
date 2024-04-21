@@ -32,10 +32,6 @@ import {
   toCanvasData,
   toLinePathD3,
 } from './LineChart.utils';
-import {
-  LineChartPositionLabel,
-  LineChartPositionLine,
-} from './components/LineChartPositionIndicator/components';
 import { ILineChartInterpolationRanges } from './LineChart.types';
 
 const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
@@ -262,12 +258,6 @@ export const LineChart = ({
             interpolationRangesX={interpolationRangesX}
           />
 
-          <LineChartPositionLine
-            y={linePathEndPointY}
-            color="black"
-            width={chart.width}
-          />
-
           <LineChartClipPath height={gridHeight} width={chart.width}>
             <Path style="stroke" strokeWidth={2} path={animatedPath}>
               <LinearGradient
@@ -278,15 +268,6 @@ export const LineChart = ({
             </Path>
             <LineChartPointer x={linePathEndPointX} y={linePathEndPointY} />
           </LineChartClipPath>
-
-          <LineChartPositionLabel
-            type="last"
-            y={linePathEndPointY}
-            canvasWidth={config.width}
-            backgroundColor="black"
-            // TODO: pass formatter
-            label={`$${data[data.length - 1]?.value ?? 0}`}
-          />
 
           {addons?.map((addon, index) => (
             <LineChartAddon
