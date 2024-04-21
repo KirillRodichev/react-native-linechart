@@ -5,21 +5,21 @@ import {
 } from 'react-native-reanimated';
 
 import { useLineChartConfig } from '../components';
-import { ILineChartInterpolationProps } from '../LineChart.types';
+import { ILineChartInterpolationRanges } from '../LineChart.types';
 
 interface IUseVerticalLabelValueProps {
   y: SharedValue<number> | number;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationRangesY: ILineChartInterpolationRanges;
 }
 
 export const useVerticalLabelValue = ({
   y,
-  interpolationProps,
+  interpolationRangesY,
 }: IUseVerticalLabelValueProps) => {
   const {
     formatters: { formatValue },
   } = useLineChartConfig();
-  const { dataRange, coordsRange } = interpolationProps;
+  const { dataRange, coordsRange } = interpolationRangesY;
 
   return useDerivedValue(() => {
     const interpolated = typeof y === 'number' ? y : y.value;

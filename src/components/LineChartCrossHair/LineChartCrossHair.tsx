@@ -12,7 +12,7 @@ import { getYForX, Path as RedashPath, parse } from 'react-native-redash';
 
 import {
   ICrossHair,
-  ILineChartInterpolationProps,
+  ILineChartInterpolationRanges,
 } from '../../LineChart.types';
 import LineChartCrossHairLabel from './LineChartCrossHairLabel';
 import { useLineChartConfig } from '../LineChartConfigContext';
@@ -28,7 +28,7 @@ interface ILineChartCrossHairProps {
   // CrossHair pan range
   linePathEndPointX: SharedValue<number>;
   linePathStartPointX: SharedValue<number>;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationRangesY: ILineChartInterpolationRanges;
 }
 
 export const LineChartCrossHair = ({
@@ -38,7 +38,7 @@ export const LineChartCrossHair = ({
   linePath,
   linePathEndPointX,
   linePathStartPointX,
-  interpolationProps,
+  interpolationRangesY,
 }: ILineChartCrossHairProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const x = useSharedValue(0);
@@ -123,7 +123,7 @@ export const LineChartCrossHair = ({
       <LineChartCrossHairLabel
         y={y}
         x={x}
-        interpolationProps={interpolationProps}
+        interpolationRangesY={interpolationRangesY}
       />
     </>
   );

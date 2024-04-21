@@ -5,25 +5,20 @@ import { Line, vec } from '@shopify/react-native-skia';
 
 import LineChartVerticalLineLabel from '../LineChartVerticalLineLabel';
 import { useLineChartConfig } from '../LineChartConfigContext';
+import { ILineChartInterpolationRanges } from '../../LineChart.types';
 
 interface ILineChartVerticalLineProps {
   index: number;
   everyRule: SharedValue<number>;
   dVerticalLine: SharedValue<number>;
-  linePathStartPointX: SharedValue<number>;
-  linePathEndPointX: SharedValue<number>;
-  dataStart: number;
-  dataEnd: number;
+  interpolationRangesX: ILineChartInterpolationRanges;
 }
 
 export const LineChartVerticalLine = ({
   index,
   everyRule,
   dVerticalLine,
-  linePathStartPointX,
-  linePathEndPointX,
-  dataEnd,
-  dataStart,
+  interpolationRangesX,
 }: ILineChartVerticalLineProps) => {
   const { config } = useLineChartConfig();
   const {
@@ -39,7 +34,8 @@ export const LineChartVerticalLine = ({
   const labelBottom = canvasHeight - labelOffset.bottom;
 
   const x = useDerivedValue(() => {
-    return linePathStartPointX.value + dVerticalLine.value * index;
+    const { coordsRange } = interpolationRangesX;
+    return coordsRange[0].value + dVerticalLine.value * index;
   });
 
   const opacity = useDerivedValue(() => {
@@ -61,13 +57,10 @@ export const LineChartVerticalLine = ({
       <LineChartVerticalLineLabel
         x={x}
         y={labelBottom}
-        linePathStartPointX={linePathStartPointX}
-        linePathEndPointX={linePathEndPointX}
-        dataStart={dataStart}
-        dataEnd={dataEnd}
         opacity={opacity}
         font={font}
         color={labelColor}
+        interpolationRangesX={interpolationRangesX}
       />
     </>
   );

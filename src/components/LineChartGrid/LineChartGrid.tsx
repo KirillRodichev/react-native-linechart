@@ -4,7 +4,7 @@ import { SharedValue } from 'react-native-reanimated';
 
 import {
   IDataPoint,
-  ILineChartInterpolationProps,
+  ILineChartInterpolationRanges,
 } from '../../LineChart.types';
 import { calcHLinesShift } from '../../LineChart.utils';
 import { LineChartVerticalLine } from '../LineChartVerticalLine';
@@ -16,11 +16,10 @@ interface ILineChartGridProps {
   data: IDataPoint[];
   everyRule: SharedValue<number>;
   dVerticalLine: SharedValue<number>;
-  linePathStartPointX: SharedValue<number>;
-  linePathEndPointX: SharedValue<number>;
   gridHeight: number;
   chartWidth: number;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationRangesY: ILineChartInterpolationRanges;
+  interpolationRangesX: ILineChartInterpolationRanges;
 }
 
 export const LineChartGrid = ({
@@ -28,14 +27,11 @@ export const LineChartGrid = ({
   dVerticalLine,
   gridHeight,
   chartWidth,
-  linePathStartPointX,
-  linePathEndPointX,
   everyRule,
-  interpolationProps,
+  interpolationRangesX,
+  interpolationRangesY,
 }: ILineChartGridProps) => {
   const { config } = useLineChartConfig();
-  const dataStartVertical = data[0]?.timestamp ?? 0;
-  const dataEndVertical = data[data.length - 1]?.timestamp ?? 0;
 
   const hLinesShift = calcHLinesShift(
     gridHeight,
@@ -54,10 +50,7 @@ export const LineChartGrid = ({
               index={i - Math.ceil(data.length / 2)}
               everyRule={everyRule}
               dVerticalLine={dVerticalLine}
-              linePathStartPointX={linePathStartPointX}
-              linePathEndPointX={linePathEndPointX}
-              dataStart={dataStartVertical}
-              dataEnd={dataEndVertical}
+              interpolationRangesX={interpolationRangesX}
             />
           );
         })}
@@ -67,7 +60,7 @@ export const LineChartGrid = ({
           <LineChartHorizontalLine
             key={i}
             y={i * hLinesShift + config.hLinesOffset}
-            interpolationProps={interpolationProps}
+            interpolationRangesY={interpolationRangesY}
           />
         );
       })}

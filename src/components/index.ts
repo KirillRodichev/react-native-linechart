@@ -6,3 +6,4 @@ export * from './LineChartCrossHair';
 export * from './CanvasWithContext';
 export * from './LineChartClipPath';
 export * from './LineChartConfigContext';
+export * from './LineChartAddon';

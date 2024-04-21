@@ -23,6 +23,7 @@ import {
   LineChartGrid,
   LineChartPointer,
   LineChartConfigProvider,
+  LineChartAddon,
 } from './components';
 import { H_LABEL_WIDTH } from './LineChart.constants';
 import {
@@ -35,7 +36,7 @@ import {
   LineChartPositionLabel,
   LineChartPositionLine,
 } from './components/LineChartPositionIndicator/components';
-import { ILineChartInterpolationProps } from './LineChart.types';
+import { ILineChartInterpolationRanges } from './LineChart.types';
 
 const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 
@@ -66,6 +67,7 @@ const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 export const LineChart = ({
   data,
   config,
+  addons,
   formatters,
   scale: scaleConfig = DEFAULT_SCALE_CONFIG,
 }: ILineChartProps) => {
@@ -209,9 +211,14 @@ export const LineChart = ({
     updatePathValues();
   });
 
-  const interpolationProps: ILineChartInterpolationProps = {
+  const interpolationRangesY: ILineChartInterpolationRanges = {
     dataRange: [globalMinMaxValues.max, globalMinMaxValues.min],
     coordsRange: [linePathTopY, linePathBottomY],
+  };
+
+  const interpolationRangesX: ILineChartInterpolationRanges = {
+    dataRange: [data[0]?.timestamp ?? 0, data[data.length - 1]?.timestamp ?? 0],
+    coordsRange: [linePathStartPointX, linePathEndPointX],
   };
 
   useUpdateLinePathOnLastPointChange({
@@ -251,9 +258,8 @@ export const LineChart = ({
             gridHeight={gridHeight}
             chartWidth={chart.width}
             dVerticalLine={dVerticalLine}
-            linePathEndPointX={linePathEndPointX}
-            linePathStartPointX={linePathStartPointX}
-            interpolationProps={interpolationProps}
+            interpolationRangesY={interpolationRangesY}
+            interpolationRangesX={interpolationRangesX}
           />
 
           <LineChartPositionLine
@@ -282,6 +288,15 @@ export const LineChart = ({
             label={`$${data[data.length - 1]?.value ?? 0}`}
           />
 
+          {addons?.map((addon, index) => (
+            <LineChartAddon
+              key={index}
+              addon={addon}
+              interpolationRangesY={interpolationRangesY}
+              interpolationRangesX={interpolationRangesX}
+            />
+          ))}
+
           <LineChartCrossHair
             chartWidth={chart.width}
             crossHair={crossHair}
@@ -289,7 +304,7 @@ export const LineChart = ({
             linePath={animatedPath}
             linePathStartPointX={linePathStartPointX}
             linePathEndPointX={linePathEndPointX}
-            interpolationProps={interpolationProps}
+            interpolationRangesY={interpolationRangesY}
           />
         </LineChartConfigProvider>
       </CanvasWithContext>
