@@ -7,39 +7,35 @@ import {
 } from 'react-native-reanimated';
 import { SkFont, Text } from '@shopify/react-native-skia';
 import { useLineChartConfig } from '../LineChartConfigContext';
+import { ILineChartInterpolationRanges } from '../../LineChart.types';
 
 interface ILineChartVerticalLineLabelProps {
   x: SharedValue<number>;
   y: number;
   opacity: SharedValue<number>;
-  linePathStartPointX: SharedValue<number>;
-  linePathEndPointX: SharedValue<number>;
-  dataStart: number;
-  dataEnd: number;
   font: SkFont;
   color: string;
+  interpolationRangesX: ILineChartInterpolationRanges;
 }
 
 export const LineChartVerticalLineLabel = ({
   y,
   x,
   opacity,
-  linePathStartPointX,
-  linePathEndPointX,
-  dataEnd,
-  dataStart,
   font,
   color,
+  interpolationRangesX,
 }: ILineChartVerticalLineLabelProps) => {
   const {
     formatters: { formatTimestamp },
   } = useLineChartConfig();
+  const { coordsRange, dataRange } = interpolationRangesX;
 
   const label = useDerivedValue(() => {
     const interpolatedTimestamp = interpolate(
       x.value,
-      [linePathStartPointX.value, linePathEndPointX.value],
-      [dataStart, dataEnd]
+      [coordsRange[0].value, coordsRange[1].value],
+      dataRange
     );
     return formatTimestamp(interpolatedTimestamp);
   });

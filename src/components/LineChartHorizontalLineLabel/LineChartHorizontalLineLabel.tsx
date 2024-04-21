@@ -4,28 +4,28 @@ import { useDerivedValue } from 'react-native-reanimated';
 import { Text } from '@shopify/react-native-skia';
 
 import { useVerticalLabelValue } from '../../hooks';
-import { ILineChartInterpolationProps } from '../../LineChart.types';
+import { ILineChartInterpolationRanges } from '../../LineChart.types';
 import { useLineChartConfig } from '../LineChartConfigContext';
 
 interface ILineChartHorizontalLineLabelProps {
   x: number;
   y: number;
   color: string;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationRangesY: ILineChartInterpolationRanges;
 }
 
 export const LineChartHorizontalLineLabel = ({
   x,
   y,
   color,
-  interpolationProps,
+  interpolationRangesY,
 }: ILineChartHorizontalLineLabelProps) => {
   const { config } = useLineChartConfig();
   const {
     fonts: { gridLabelFont: font },
   } = config;
   const label = useVerticalLabelValue({
-    interpolationProps,
+    interpolationRangesY,
     y,
   });
 

@@ -36,7 +36,7 @@ import {
   LineChartPositionLabel,
   LineChartPositionLine,
 } from './components/LineChartPositionIndicator/components';
-import { ILineChartInterpolationProps } from './LineChart.types';
+import { ILineChartInterpolationRanges } from './LineChart.types';
 
 const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 
@@ -211,12 +211,12 @@ export const LineChart = ({
     updatePathValues();
   });
 
-  const interpolationProps: ILineChartInterpolationProps = {
+  const interpolationRangesY: ILineChartInterpolationRanges = {
     dataRange: [globalMinMaxValues.max, globalMinMaxValues.min],
     coordsRange: [linePathTopY, linePathBottomY],
   };
 
-  const interpolationPropsX: ILineChartInterpolationProps = {
+  const interpolationRangesX: ILineChartInterpolationRanges = {
     dataRange: [data[0]?.timestamp ?? 0, data[data.length - 1]?.timestamp ?? 0],
     coordsRange: [linePathStartPointX, linePathEndPointX],
   };
@@ -258,9 +258,8 @@ export const LineChart = ({
             gridHeight={gridHeight}
             chartWidth={chart.width}
             dVerticalLine={dVerticalLine}
-            linePathEndPointX={linePathEndPointX}
-            linePathStartPointX={linePathStartPointX}
-            interpolationProps={interpolationProps}
+            interpolationRangesY={interpolationRangesY}
+            interpolationRangesX={interpolationRangesX}
           />
 
           <LineChartPositionLine
@@ -293,8 +292,8 @@ export const LineChart = ({
             <LineChartAddon
               key={index}
               addon={addon}
-              interpolationPropsY={interpolationProps}
-              interpolationPropsX={interpolationPropsX}
+              interpolationRangesY={interpolationRangesY}
+              interpolationRangesX={interpolationRangesX}
             />
           ))}
 
@@ -305,7 +304,7 @@ export const LineChart = ({
             linePath={animatedPath}
             linePathStartPointX={linePathStartPointX}
             linePathEndPointX={linePathEndPointX}
-            interpolationProps={interpolationProps}
+            interpolationRangesY={interpolationRangesY}
           />
         </LineChartConfigProvider>
       </CanvasWithContext>

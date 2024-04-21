@@ -1,16 +1,16 @@
 import { interpolate, useDerivedValue } from 'react-native-reanimated';
-import { ILineChartInterpolationProps } from '../LineChart.types';
+import { ILineChartInterpolationRanges } from '../LineChart.types';
 
 interface IUseCoordByValueProps {
   value: number;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationRanges: ILineChartInterpolationRanges;
 }
 
 export const useCoordByValue = ({
   value,
-  interpolationProps,
+  interpolationRanges,
 }: IUseCoordByValueProps) => {
-  const { dataRange, coordsRange } = interpolationProps;
+  const { dataRange, coordsRange } = interpolationRanges;
 
   return useDerivedValue(() => {
     return interpolate(value, dataRange, [

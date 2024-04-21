@@ -3,19 +3,19 @@ import React from 'react';
 import { useDerivedValue } from 'react-native-reanimated';
 import { Line, vec } from '@shopify/react-native-skia';
 
-import { ILineChartInterpolationProps } from '../../LineChart.types';
+import { ILineChartInterpolationRanges } from '../../LineChart.types';
 import { H_LABEL_WIDTH } from '../../LineChart.constants';
 import LineChartHorizontalLineLabel from '../LineChartHorizontalLineLabel';
 import { useLineChartConfig } from '../LineChartConfigContext';
 
 interface ILineChartHorizontalLineProps {
   y: number;
-  interpolationProps: ILineChartInterpolationProps;
+  interpolationRangesY: ILineChartInterpolationRanges;
 }
 
 export const LineChartHorizontalLine = ({
   y,
-  interpolationProps,
+  interpolationRangesY,
 }: ILineChartHorizontalLineProps) => {
   const { config } = useLineChartConfig();
   const {
@@ -39,7 +39,7 @@ export const LineChartHorizontalLine = ({
         y={y}
         x={rightLabel}
         color={labelColor}
-        interpolationProps={interpolationProps}
+        interpolationRangesY={interpolationRangesY}
       />
     </>
   );

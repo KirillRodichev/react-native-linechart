@@ -2,28 +2,28 @@ import React from 'react';
 
 import {
   ILineChartAddon,
-  ILineChartInterpolationProps,
+  ILineChartInterpolationRanges,
 } from '../../LineChart.types';
 import { useCoordByValue } from '../../hooks';
 
 interface ILineChartAddonProps {
   addon: ILineChartAddon;
-  interpolationPropsY: ILineChartInterpolationProps;
-  interpolationPropsX: ILineChartInterpolationProps;
+  interpolationRangesY: ILineChartInterpolationRanges;
+  interpolationRangesX: ILineChartInterpolationRanges;
 }
 
 export const LineChartAddon = ({
   addon: { point, Addon },
-  interpolationPropsY,
-  interpolationPropsX,
+  interpolationRangesY,
+  interpolationRangesX,
 }: ILineChartAddonProps) => {
   const y = useCoordByValue({
     value: point.value,
-    interpolationProps: interpolationPropsY,
+    interpolationRanges: interpolationRangesY,
   });
   const x = useCoordByValue({
     value: point.timestamp,
-    interpolationProps: interpolationPropsX,
+    interpolationRanges: interpolationRangesX,
   });
 
   return <Addon x={x} y={y} />;

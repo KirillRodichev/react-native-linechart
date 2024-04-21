@@ -81,7 +81,7 @@ export interface ICrossHair {
 
 export type GestureModeType = 'inspect' | 'scroll';
 
-export interface ILineChartInterpolationProps {
+export interface ILineChartInterpolationRanges {
   dataRange: [number, number];
   coordsRange: [SharedValue<number>, SharedValue<number>];
 }
