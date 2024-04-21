@@ -86,7 +86,7 @@ const LineChartConfigContext =
 export const useLineChartConfig = () => useContext(LineChartConfigContext);
 
 export const LineChartConfigProvider = ({
-  // config,
+  config,
   children,
   formatters,
 }: PropsWithChildren<ILineChartConfigProviderProps>) => {
@@ -96,9 +96,20 @@ export const LineChartConfigProvider = ({
         formatTimestamp: formatters?.formatTimestamp ?? formatTimestamp,
         formatValue: formatters?.formatValue ?? formatValue,
       },
-      config: defaultConfig, // TODO: merge defaultConfig and config
+      config: {
+        ...defaultConfig,
+        ...config,
+        fonts: {
+          ...defaultConfig.fonts,
+          ...config.fonts,
+        },
+        grid: {
+          ...defaultConfig.grid,
+          ...config.grid,
+        },
+      },
     }),
-    [formatters?.formatTimestamp, formatters?.formatValue]
+    [formatters?.formatTimestamp, formatters?.formatValue, config]
   );
 
   return (
