@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 
-import { Circle, Line, Rect, SkPath, vec } from '@shopify/react-native-skia';
+import {
+  Circle,
+  Line,
+  PathCommand,
+  Rect,
+  SkPath,
+  vec,
+} from '@shopify/react-native-skia';
 import {
   runOnJS,
   SharedValue,
@@ -8,7 +15,6 @@ import {
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
-import { getYForX, Path as RedashPath, parse } from 'react-native-redash';
 
 import {
   ICrossHair,
@@ -16,6 +22,7 @@ import {
 } from '../../LineChart.types';
 import LineChartCrossHairLabel from './LineChartCrossHairLabel';
 import { useLineChartConfig } from '../LineChartConfigContext';
+import { getYForX } from '../../utils';
 
 const BLACK_CIRCLE_R = 3;
 const WHITE_CIRCLE_R = 5;
@@ -41,19 +48,11 @@ export const LineChartCrossHair = ({
   interpolationRangesY,
 }: ILineChartCrossHairProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  const x = useSharedValue(0);
-  const y = useSharedValue(0);
   const { config } = useLineChartConfig();
 
-  const parseLinePath = () => {
-    try {
-      return parse(linePath.value.toSVGString());
-    } catch {
-      return null;
-    }
-  };
-
-  const redashPath = useSharedValue<RedashPath | null>(parseLinePath());
+  const x = useSharedValue(0);
+  const y = useSharedValue(0);
+  const commands = useSharedValue<PathCommand[]>(linePath.value.toCmds());
 
   useAnimatedReaction(
     () => crossHair.value?.x,
@@ -70,11 +69,7 @@ export const LineChartCrossHair = ({
           : linePathEndPointX.value;
       x.value = Math.min(Math.max(prepared, left), right);
 
-      if (!redashPath.value) {
-        y.value = 0;
-      } else {
-        y.value = getYForX(redashPath.value, x.value) ?? 0;
-      }
+      y.value = getYForX(commands.value, x.value) ?? 0;
     }
   );
 
@@ -84,11 +79,6 @@ export const LineChartCrossHair = ({
   const rectX = useDerivedValue(() => x.value);
   const rectY = useDerivedValue(() => (x.value === 0 ? viewPortHeight : 0));
 
-  const syncRedashPathWithSkiaPath = () => {
-    redashPath.value = parseLinePath();
-  };
-
-  // TODO: think how to move to UI
   useAnimatedReaction(
     () => crossHair.value,
     (cur, prev) => {
@@ -97,7 +87,7 @@ export const LineChartCrossHair = ({
         return;
       }
       if (prev === null) {
-        runOnJS(syncRedashPathWithSkiaPath)();
+        commands.value = linePath.value.toCmds();
         runOnJS(setIsVisible)(true);
         return;
       }

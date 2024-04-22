@@ -5,7 +5,7 @@ import { SkPath } from '@shopify/react-native-skia';
 
 import { usePrevious } from './usePrevious';
 import { IDataPoint } from '../LineChart.types';
-import { toCanvasData, toLinePathD3 } from '../LineChart.utils';
+import { toCanvasData, toLinePathD3 } from '../utils';
 
 type BoundsRange = [number, number];
 

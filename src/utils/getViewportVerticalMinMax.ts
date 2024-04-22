@@ -1,52 +1,4 @@
-import { curveBasis, line } from 'd3-shape';
-import { scaleLinear, scalePoint } from 'd3-scale';
-import { Skia, SkPath } from '@shopify/react-native-skia';
-
-import { IDataPoint, ILinePoint } from './LineChart.types';
-
-export const calcHLinesShift = (
-  chartHeight: number,
-  hLinesOffset: number,
-  hLinesNumber: number
-) => {
-  return (chartHeight - hLinesOffset * 2) / (hLinesNumber - 1);
-};
-
-export const toCanvasData = (
-  data: IDataPoint[],
-  xRange: Iterable<number>,
-  yRange: Iterable<number>
-): ILinePoint[] => {
-  const xScale = scalePoint()
-    .domain(data.map((d) => d.timestamp.toString()))
-    .range(xRange)
-    .align(0);
-
-  const yScale = scaleLinear()
-    .domain([
-      Math.min(...data.map((d) => d.value)),
-      Math.max(...data.map((d) => d.value)),
-    ])
-    .range(yRange);
-
-  const canvasData = data.map((d) => ({
-    // TODO
-
-    x: xScale(d.timestamp.toString())!,
-    y: yScale(d.value),
-  }));
-
-  return canvasData;
-};
-
-export const toLinePathD3 = (data: ILinePoint[]) => {
-  const curvedLine = line<ILinePoint>()
-    .x((d) => d.x)
-    .y((d) => d.y)
-    .curve(curveBasis)(data);
-
-  return Skia.Path.MakeFromSVGString(curvedLine!)!;
-};
+import { SkPath } from '@shopify/react-native-skia';
 
 export const getViewportVerticalMinMax = (
   path: SkPath,
@@ -147,24 +99,4 @@ export const getViewportVerticalMinMax = (
     minIndex,
     maxIndex,
   };
-};
-
-// FixMe: remove ignores
-export const findMinMaxValue = (data: IDataPoint[]) => {
-  // @ts-ignore
-  let min = data[0].value;
-  // @ts-ignore
-  let max = data[0].value;
-
-  for (let i = 1; i < data.length; i++) {
-    // @ts-ignore
-    if (data[i].value < min) {
-      min = data[i]?.value ?? 0;
-    }
-    // @ts-ignore
-    if (data[i]?.value > max) {
-      max = data[i]?.value ?? 0;
-    }
-  }
-  return { min, max };
 };

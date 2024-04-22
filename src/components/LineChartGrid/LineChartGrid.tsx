@@ -6,7 +6,7 @@ import {
   IDataPoint,
   ILineChartInterpolationRanges,
 } from '../../LineChart.types';
-import { calcHLinesShift } from '../../LineChart.utils';
+import { calcHLinesShift } from '../../utils';
 import { LineChartVerticalLine } from '../LineChartVerticalLine';
 import { LineChartHorizontalLine } from '../LineChartHorizontalLine';
 import LineChartClipPath from '../LineChartClipPath';
