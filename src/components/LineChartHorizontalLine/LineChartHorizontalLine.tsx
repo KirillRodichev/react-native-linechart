@@ -21,7 +21,7 @@ export const LineChartHorizontalLine = ({
   const {
     labelColor,
     width: canvasWidth,
-    grid: { lineColor },
+    grid: { lineColor, lineWidth },
     valueLabelOffset: labelOffset,
   } = config;
   const left = 0;
@@ -34,7 +34,7 @@ export const LineChartHorizontalLine = ({
 
   return (
     <>
-      <Line p1={p1} p2={p2} color={lineColor} strokeWidth={0.5} />
+      <Line p1={p1} p2={p2} color={lineColor} strokeWidth={lineWidth} />
       <LineChartHorizontalLineLabel
         y={y}
         x={rightLabel}

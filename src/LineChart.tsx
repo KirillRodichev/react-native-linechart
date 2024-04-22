@@ -259,11 +259,15 @@ export const LineChart = ({
           />
 
           <LineChartClipPath height={gridHeight} width={chart.width}>
-            <Path style="stroke" strokeWidth={2} path={animatedPath}>
+            <Path
+              style="stroke"
+              path={animatedPath}
+              strokeWidth={config.line.width}
+            >
               <LinearGradient
                 start={vec(config.width / 2, 0)}
                 end={vec(config.width / 2, gridHeight)}
-                colors={config.lineColors}
+                colors={config.line.colors}
               />
             </Path>
             <LineChartPointer x={linePathEndPointX} y={linePathEndPointY} />

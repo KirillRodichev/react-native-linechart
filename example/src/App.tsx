@@ -1,20 +1,20 @@
 import React, {useReducer, useState} from 'react';
-import {Button, Dimensions, SafeAreaView, StyleSheet} from 'react-native';
+import {Button, Dimensions, SafeAreaView, StyleSheet, Text} from 'react-native';
 
 import {SharedValue} from 'react-native-reanimated';
-import {Circle, GradientProps} from '@shopify/react-native-skia';
+import {Circle} from '@shopify/react-native-skia';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   ILeftRightValue,
   ILineChartGridConfig,
+  ILineChartLineConfig,
   IMinMaxValue,
   ITopBottomValue,
   LineChart,
 } from 'react-native-linechart';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import Slider from '@react-native-community/slider';
 
-import {ColorPicker, useColorPickerRef} from './components';
+import {ColorPicker, useColorPickerRef, Slider} from './components';
 import {data} from './data';
 
 const DEFAULT_HEIGHT = 345;
@@ -47,8 +47,7 @@ interface ILineChartConfigState {
   timestampLabelOffset: ITopBottomValue;
   valueLabelOffset: ILeftRightValue;
 
-  lineColors: GradientProps['colors'];
-
+  line: ILineChartLineConfig;
   grid: ILineChartGridConfig;
 }
 
@@ -60,7 +59,10 @@ const initialConfig: ILineChartConfigState = {
   vLinesRange: {min: 4, max: 6},
   labelSize: 9,
   timestampLabelOffset: {top: 7, bottom: 10}, // 4 + 3, 7 + 3 to compensate line height
-  lineColors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+  line: {
+    colors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+    width: 2,
+  },
   grid: {lineColor: '#E4E4E5', lineWidth: 0.5},
   labelColor: '#8A8B90',
   valueLabelOffset: {left: 8, right: 8},
@@ -73,9 +75,11 @@ enum ConfigActionTypesEnum {
   HLinesOffset,
   VLinesRange,
   LineColors,
+  LineWidth,
   GridLineColor,
-  GridLineSize,
+  GridLineWidth,
   LabelColor,
+  LabelSize,
 }
 
 type ConfigAction =
@@ -90,6 +94,18 @@ type ConfigAction =
   | {
       type: ConfigActionTypesEnum.GridLineColor;
       payload: string;
+    }
+  | {
+      type: ConfigActionTypesEnum.GridLineWidth;
+      payload: number;
+    }
+  | {
+      type: ConfigActionTypesEnum.LabelSize;
+      payload: number;
+    }
+  | {
+      type: ConfigActionTypesEnum.LineWidth;
+      payload: number;
     }
   | {
       type: ConfigActionTypesEnum.LabelColor;
@@ -107,8 +123,14 @@ const configReducer = (
       return {...state, height: action.payload};
     case ConfigActionTypesEnum.GridLineColor:
       return {...state, grid: {...state.grid, lineColor: action.payload}};
+    case ConfigActionTypesEnum.GridLineWidth:
+      return {...state, grid: {...state.grid, lineWidth: action.payload}};
     case ConfigActionTypesEnum.LabelColor:
       return {...state, labelColor: action.payload};
+    case ConfigActionTypesEnum.LabelSize:
+      return {...state, labelSize: action.payload};
+    case ConfigActionTypesEnum.LineWidth:
+      return {...state, line: {...state.line, width: action.payload}};
     default:
       return state;
   }
@@ -143,27 +165,63 @@ function App(): React.JSX.Element {
             config={config}
             addons={[{point, Addon: AddonExample}]}
           />
+          <Text>Chart config:</Text>
           <Slider
-            style={{width: 200, height: 40}}
+            label={`Height: ${config.height}`}
+            value={config.height}
             minimumValue={100}
             maximumValue={400}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
             onValueChange={value => {
               dispatch({type: ConfigActionTypesEnum.Height, payload: value});
             }}
-            value={config.height}
           />
           <Slider
-            style={{width: 200, height: 40}}
+            label={`Width: ${config.width}`}
+            value={config.width}
             minimumValue={100}
             maximumValue={Dimensions.get('window').width}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
             onValueChange={value => {
               dispatch({type: ConfigActionTypesEnum.Width, payload: value});
             }}
-            value={config.width}
+          />
+          <Slider
+            label={`Grid line width: ${config.grid.lineWidth}`}
+            step={0.5}
+            minimumValue={0.5}
+            maximumValue={5}
+            value={config.grid.lineWidth}
+            onValueChange={value => {
+              dispatch({
+                type: ConfigActionTypesEnum.GridLineWidth,
+                payload: value,
+              });
+            }}
+          />
+          <Slider
+            label={`Label size: ${config.labelSize}`}
+            step={1}
+            minimumValue={5}
+            maximumValue={15}
+            value={config.labelSize}
+            onValueChange={value => {
+              dispatch({
+                type: ConfigActionTypesEnum.LabelSize,
+                payload: value,
+              });
+            }}
+          />
+          <Slider
+            label={`Line width: ${config.line.width}`}
+            step={0.5}
+            minimumValue={0.5}
+            maximumValue={5}
+            value={config.line.width}
+            onValueChange={value => {
+              dispatch({
+                type: ConfigActionTypesEnum.LineWidth,
+                payload: value,
+              });
+            }}
           />
           <Button
             title="Pick grid color"

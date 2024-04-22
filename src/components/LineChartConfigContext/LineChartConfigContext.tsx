@@ -62,7 +62,10 @@ const defaultConfig: ILineChartContextConfig = {
   vLinesRange: { min: 4, max: 6 },
   labelSize: 9,
   timestampLabelOffset: { top: 7, bottom: 10 }, // 4 + 3, 7 + 3 to compensate line height
-  lineColors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+  line: {
+    colors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+    width: 2,
+  },
   labelColor: '#8A8B90',
   valueLabelOffset: { left: 8, right: 8 },
   fonts: {

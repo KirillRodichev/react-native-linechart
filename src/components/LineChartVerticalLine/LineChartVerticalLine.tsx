@@ -23,7 +23,7 @@ export const LineChartVerticalLine = ({
   const { config } = useLineChartConfig();
   const {
     labelColor,
-    grid: { lineColor },
+    grid: { lineColor, lineWidth },
     height: canvasHeight,
     fonts: { gridLabelFont: font },
     timestampLabelOffset: labelOffset,
@@ -52,7 +52,7 @@ export const LineChartVerticalLine = ({
         p2={p2}
         opacity={opacity}
         color={lineColor}
-        strokeWidth={0.5}
+        strokeWidth={lineWidth}
       />
       <LineChartVerticalLineLabel
         x={x}
