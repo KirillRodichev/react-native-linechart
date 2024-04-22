@@ -31,7 +31,7 @@ import {
   getViewportVerticalMinMax,
   toCanvasData,
   toLinePathD3,
-} from './LineChart.utils';
+} from './utils';
 import { ILineChartInterpolationRanges } from './LineChart.types';
 
 const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
