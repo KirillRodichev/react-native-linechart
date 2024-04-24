@@ -1,8 +1,16 @@
 import React, {useReducer, useState} from 'react';
-import {Button, Dimensions, SafeAreaView, StyleSheet, Text} from 'react-native';
+import {
+  Button,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import {SharedValue} from 'react-native-reanimated';
-import {Circle} from '@shopify/react-native-skia';
+import {Circle, GradientProps} from '@shopify/react-native-skia';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   ILeftRightValue,
@@ -14,7 +22,7 @@ import {
 } from 'react-native-linechart';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
-import {ColorPicker, useColorPickerRef, Slider} from './components';
+import {ColorPicker, useColorPickerRef, Slider, Card} from './components';
 import {data} from './data';
 
 const DEFAULT_HEIGHT = 345;
@@ -108,6 +116,10 @@ type ConfigAction =
       payload: number;
     }
   | {
+      type: ConfigActionTypesEnum.LineColors;
+      payload: GradientProps['colors'];
+    }
+  | {
       type: ConfigActionTypesEnum.LabelColor;
       payload: string;
     };
@@ -131,6 +143,8 @@ const configReducer = (
       return {...state, labelSize: action.payload};
     case ConfigActionTypesEnum.LineWidth:
       return {...state, line: {...state.line, width: action.payload}};
+    case ConfigActionTypesEnum.LineColors:
+      return {...state, line: {...state.line, colors: action.payload}};
     default:
       return state;
   }
@@ -153,91 +167,135 @@ function App(): React.JSX.Element {
       case 'labelColor':
         dispatch({type: ConfigActionTypesEnum.LabelColor, payload});
         break;
+      case 'lineColor':
+        dispatch({
+          type: ConfigActionTypesEnum.LineColors,
+          payload: [...config.line.colors, payload],
+        });
+        break;
     }
   };
 
   return (
     <GestureHandlerRootView style={styles.handlerWrapper}>
       <BottomSheetModalProvider>
-        <SafeAreaView style={styles.wrapper}>
-          <LineChart
-            data={data}
-            config={config}
-            addons={[{point, Addon: AddonExample}]}
-          />
-          <Text>Chart config:</Text>
-          <Slider
-            label={`Height: ${config.height}`}
-            value={config.height}
-            minimumValue={100}
-            maximumValue={400}
-            onValueChange={value => {
-              dispatch({type: ConfigActionTypesEnum.Height, payload: value});
-            }}
-          />
-          <Slider
-            label={`Width: ${config.width}`}
-            value={config.width}
-            minimumValue={100}
-            maximumValue={Dimensions.get('window').width}
-            onValueChange={value => {
-              dispatch({type: ConfigActionTypesEnum.Width, payload: value});
-            }}
-          />
-          <Slider
-            label={`Grid line width: ${config.grid.lineWidth}`}
-            step={0.5}
-            minimumValue={0.5}
-            maximumValue={5}
-            value={config.grid.lineWidth}
-            onValueChange={value => {
-              dispatch({
-                type: ConfigActionTypesEnum.GridLineWidth,
-                payload: value,
-              });
-            }}
-          />
-          <Slider
-            label={`Label size: ${config.labelSize}`}
-            step={1}
-            minimumValue={5}
-            maximumValue={15}
-            value={config.labelSize}
-            onValueChange={value => {
-              dispatch({
-                type: ConfigActionTypesEnum.LabelSize,
-                payload: value,
-              });
-            }}
-          />
-          <Slider
-            label={`Line width: ${config.line.width}`}
-            step={0.5}
-            minimumValue={0.5}
-            maximumValue={5}
-            value={config.line.width}
-            onValueChange={value => {
-              dispatch({
-                type: ConfigActionTypesEnum.LineWidth,
-                payload: value,
-              });
-            }}
-          />
-          <Button
-            title="Pick grid color"
-            onPress={() => {
-              colorPickerRef.current?.open(config.grid.lineColor);
-              setColorPickerType('gridLine');
-            }}
-          />
-          <Button
-            title="Pick label color"
-            onPress={() => {
-              colorPickerRef.current?.open(config.labelColor);
-              setColorPickerType('labelColor');
-            }}
-          />
-          <ColorPicker ref={colorPickerRef} onPickColor={handlePickColor} />
+        <SafeAreaView style={{flex: 1}}>
+          <ScrollView contentContainerStyle={styles.wrapper}>
+            <LineChart
+              data={data}
+              config={config}
+              addons={[{point, Addon: AddonExample}]}
+            />
+            <Card title="Size config:" wrapperStyle={styles.cardWrapper}>
+              <Slider
+                label={`Height: ${config.height}`}
+                value={config.height}
+                minimumValue={100}
+                maximumValue={400}
+                onValueChange={value => {
+                  dispatch({
+                    type: ConfigActionTypesEnum.Height,
+                    payload: value,
+                  });
+                }}
+              />
+              <Slider
+                label={`Width: ${config.width}`}
+                value={config.width}
+                minimumValue={100}
+                maximumValue={Dimensions.get('window').width}
+                onValueChange={value => {
+                  dispatch({type: ConfigActionTypesEnum.Width, payload: value});
+                }}
+              />
+              <Slider
+                label={`Grid line width: ${config.grid.lineWidth}`}
+                step={0.5}
+                minimumValue={0.5}
+                maximumValue={5}
+                value={config.grid.lineWidth}
+                onValueChange={value => {
+                  dispatch({
+                    type: ConfigActionTypesEnum.GridLineWidth,
+                    payload: value,
+                  });
+                }}
+              />
+              <Slider
+                label={`Label size: ${config.labelSize}`}
+                step={1}
+                minimumValue={5}
+                maximumValue={15}
+                value={config.labelSize}
+                onValueChange={value => {
+                  dispatch({
+                    type: ConfigActionTypesEnum.LabelSize,
+                    payload: value,
+                  });
+                }}
+              />
+              <Slider
+                label={`Line width: ${config.line.width}`}
+                step={0.5}
+                minimumValue={0.5}
+                maximumValue={5}
+                value={config.line.width}
+                onValueChange={value => {
+                  dispatch({
+                    type: ConfigActionTypesEnum.LineWidth,
+                    payload: value,
+                  });
+                }}
+              />
+            </Card>
+            <Card
+              title="Colors config:"
+              cardStyle={styles.colorsCard}
+              wrapperStyle={styles.cardWrapper}>
+              <Button
+                color="#000"
+                title="Pick grid color"
+                onPress={() => {
+                  colorPickerRef.current?.open(config.grid.lineColor);
+                  setColorPickerType('gridLine');
+                }}
+              />
+              <Button
+                color="#000"
+                title="Pick label color"
+                onPress={() => {
+                  colorPickerRef.current?.open(config.labelColor);
+                  setColorPickerType('labelColor');
+                }}
+              />
+              <View style={styles.lineColorsWrapper}>
+                <Text>Line colors:</Text>
+                <View style={styles.lineColorsPickersWrapper}>
+                  <Button
+                    title="Remove"
+                    color="#000"
+                    disabled={config.line.colors.length < 2}
+                    onPress={() => {
+                      dispatch({
+                        type: ConfigActionTypesEnum.LineColors,
+                        payload: config.line.colors.slice(0, -1),
+                      });
+                    }}
+                  />
+                  <Button
+                    title="Add"
+                    color="#000"
+                    disabled={config.line.colors.length > 5}
+                    onPress={() => {
+                      colorPickerRef.current?.open('#000');
+                      setColorPickerType('lineColor');
+                    }}
+                  />
+                </View>
+              </View>
+            </Card>
+            <ColorPicker ref={colorPickerRef} onPickColor={handlePickColor} />
+          </ScrollView>
         </SafeAreaView>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
@@ -246,12 +304,27 @@ function App(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   wrapper: {
-    flex: 1,
+    paddingTop: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#fff',
+    paddingBottom: 24,
   },
   handlerWrapper: {
     flex: 1,
+  },
+  lineColorsWrapper: {
+    alignItems: 'center',
+  },
+  lineColorsPickersWrapper: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  colorsCard: {
+    gap: 8,
+  },
+  cardWrapper: {
+    paddingHorizontal: 16,
   },
 });
 

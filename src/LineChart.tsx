@@ -265,8 +265,8 @@ export const LineChart = ({
               strokeWidth={config.line.width}
             >
               <LinearGradient
-                start={vec(config.width / 2, 0)}
-                end={vec(config.width / 2, gridHeight)}
+                start={vec(config.width / 2, chart.top)}
+                end={vec(config.width / 2, chart.bottom)}
                 colors={config.line.colors}
               />
             </Path>
