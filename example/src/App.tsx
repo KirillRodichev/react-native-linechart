@@ -88,6 +88,7 @@ enum ConfigActionTypesEnum {
   GridLineWidth,
   LabelColor,
   LabelSize,
+  Reset,
 }
 
 type ConfigAction =
@@ -122,6 +123,9 @@ type ConfigAction =
   | {
       type: ConfigActionTypesEnum.LabelColor;
       payload: string;
+    }
+  | {
+      type: ConfigActionTypesEnum.Reset;
     };
 
 const configReducer = (
@@ -145,6 +149,8 @@ const configReducer = (
       return {...state, line: {...state.line, width: action.payload}};
     case ConfigActionTypesEnum.LineColors:
       return {...state, line: {...state.line, colors: action.payload}};
+    case ConfigActionTypesEnum.Reset:
+      return initialConfig;
     default:
       return state;
   }
@@ -294,6 +300,15 @@ function App(): React.JSX.Element {
                 </View>
               </View>
             </Card>
+            <View style={styles.resetButtonWrapper}>
+              <Button
+                color="#000"
+                title="RESET CONFIG"
+                onPress={() => {
+                  dispatch({type: ConfigActionTypesEnum.Reset});
+                }}
+              />
+            </View>
             <ColorPicker ref={colorPickerRef} onPickColor={handlePickColor} />
           </ScrollView>
         </SafeAreaView>
@@ -324,6 +339,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cardWrapper: {
+    paddingHorizontal: 16,
+  },
+  resetButtonWrapper: {
+    marginTop: 16,
+    width: '100%',
     paddingHorizontal: 16,
   },
 });
