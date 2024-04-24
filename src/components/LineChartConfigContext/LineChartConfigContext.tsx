@@ -62,7 +62,10 @@ const defaultConfig: ILineChartContextConfig = {
   vLinesRange: { min: 4, max: 6 },
   labelSize: 9,
   timestampLabelOffset: { top: 7, bottom: 10 }, // 4 + 3, 7 + 3 to compensate line height
-  lineColors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+  line: {
+    colors: ['rgba(98, 126, 234, 1)', 'rgba(133, 141, 204, 1)'],
+    width: 2,
+  },
   labelColor: '#8A8B90',
   valueLabelOffset: { left: 8, right: 8 },
   fonts: {
@@ -86,7 +89,7 @@ const LineChartConfigContext =
 export const useLineChartConfig = () => useContext(LineChartConfigContext);
 
 export const LineChartConfigProvider = ({
-  // config,
+  config,
   children,
   formatters,
 }: PropsWithChildren<ILineChartConfigProviderProps>) => {
@@ -96,9 +99,20 @@ export const LineChartConfigProvider = ({
         formatTimestamp: formatters?.formatTimestamp ?? formatTimestamp,
         formatValue: formatters?.formatValue ?? formatValue,
       },
-      config: defaultConfig, // TODO: merge defaultConfig and config
+      config: {
+        ...defaultConfig,
+        ...config,
+        fonts: {
+          ...defaultConfig.fonts,
+          ...config.fonts,
+        },
+        grid: {
+          ...defaultConfig.grid,
+          ...config.grid,
+        },
+      },
     }),
-    [formatters?.formatTimestamp, formatters?.formatValue]
+    [formatters?.formatTimestamp, formatters?.formatValue, config]
   );
 
   return (

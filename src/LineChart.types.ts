@@ -40,10 +40,14 @@ export interface ILineChartConfig {
   timestampLabelOffset: ITopBottomValue;
   valueLabelOffset: ILeftRightValue;
 
-  lineColors: GradientProps['colors'];
-
+  line: ILineChartLineConfig;
   fonts?: Partial<ILineChartFontsConfig>;
   grid?: Partial<ILineChartGridConfig>;
+}
+
+export interface ILineChartLineConfig {
+  colors: GradientProps['colors'];
+  width: number;
 }
 
 export interface ILineChartFontsConfig {
