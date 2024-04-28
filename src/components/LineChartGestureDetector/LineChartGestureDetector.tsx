@@ -2,7 +2,6 @@ import React, { PropsWithChildren, useMemo, useState } from 'react';
 
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { SharedValue } from 'react-native-reanimated';
-import { SkPath } from '@shopify/react-native-skia';
 
 import {
   useCrossHairPanGesture,
@@ -11,10 +10,11 @@ import {
   usePinchGesture,
 } from './hooks';
 import { GestureModeType, ICrossHair } from '../../LineChart.types';
+import { ICoordinates } from '../LineChartViewPort/LineChartViewPort.types';
 
 interface ILineChartGestureDetectorProps {
-  linePath: SharedValue<SkPath>;
-  animatedPath: SharedValue<SkPath>;
+  viewPortCoordsValue: SharedValue<ICoordinates>;
+  animatedViewPortCoordsValue: SharedValue<ICoordinates>;
   scale: SharedValue<number>;
   focalX: SharedValue<number>;
   dx: SharedValue<number>;
@@ -30,8 +30,8 @@ interface ILineChartGestureDetectorProps {
 
 export const LineChartGestureDetector = ({
   children,
-  linePath,
-  animatedPath,
+  viewPortCoordsValue,
+  animatedViewPortCoordsValue,
   scale,
   focalX,
   dx,
@@ -47,14 +47,18 @@ export const LineChartGestureDetector = ({
 
   const onPinchEnd = () => {
     'worklet';
-    linePath.value = animatedPath.value.copy();
+    viewPortCoordsValue.value = {
+      ...animatedViewPortCoordsValue.value,
+    };
     scale.value = 1;
     focalX.value = 0;
   };
 
   const onPanEnd = () => {
     'worklet';
-    linePath.value = animatedPath.value.copy();
+    viewPortCoordsValue.value = {
+      ...animatedViewPortCoordsValue.value,
+    };
     dx.value = 0;
   };
 

@@ -29,10 +29,11 @@ import { H_LABEL_WIDTH } from './LineChart.constants';
 import {
   findMinMaxValue,
   getViewportVerticalMinMax,
-  toCanvasData,
   toLinePathD3,
 } from './LineChart.utils';
 import { ILineChartInterpolationRanges } from './LineChart.types';
+import { ICoordinates } from './components/LineChartViewPort/LineChartViewPort.types';
+import { gestureTransformViewPort } from './components/LineChartViewPort/LineChartViewPort.utils';
 
 const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 
@@ -94,15 +95,37 @@ export const LineChart = ({
   const scale = useSharedValue(1);
   const focalX = useSharedValue(0);
 
-  const canvasData = toCanvasData(
-    data,
-    // this range sets initial chart width = 2x config width
-    [-chart.width - 25, chart.width - 25], // TODO: calculate based on last label width
-    [config.height, 0]
-  );
-
+  const canvasData = data.map(({ value, timestamp }) => ({
+    x: timestamp,
+    y: value,
+  }));
   const initialPath = toLinePathD3(canvasData);
   const linePath = useSharedValue(initialPath.copy());
+
+  const initialPathBounds = initialPath.getBounds();
+  const chartCoords: ICoordinates = {
+    startX: initialPathBounds.x,
+    startY: initialPathBounds.y,
+    endX: initialPathBounds.x + initialPathBounds.width,
+    endY: initialPathBounds.y + initialPathBounds.height,
+  };
+
+  const renderCoords: ICoordinates = {
+    startX: 0,
+    startY: 0,
+    endX: chart.width,
+    endY: chart.height,
+  };
+
+  const viewPortCoordsValue = useSharedValue({ ...chartCoords });
+  const animatedViewPortCoordinatesValue = useDerivedValue(() =>
+    gestureTransformViewPort(
+      { dx, scale, focalX },
+      viewPortCoordsValue.value,
+      renderCoords,
+      linePath.value
+    )
+  );
   // it's also a distance from left point of the chart to the left point of the viewport
   const linePathStartPointX = useSharedValue(linePath.value.getPoint(0).x);
   const linePathEndPointX = useSharedValue(linePath.value.getLastPt().x);
@@ -232,9 +255,9 @@ export const LineChart = ({
       focalX={focalX}
       isInspectEnabled
       isGesturesEnabled
-      linePath={linePath}
+      viewPortCoordsValue={viewPortCoordsValue}
+      animatedViewPortCoordsValue={animatedViewPortCoordinatesValue}
       chartWidth={chart.width}
-      animatedPath={animatedPath}
       crossHair={crossHair}
       crossHairAccum={crossHairAccum}
       linePathStartPointX={linePathStartPointX}
