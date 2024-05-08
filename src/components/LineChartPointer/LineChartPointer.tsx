@@ -1,12 +1,9 @@
 import React from 'react';
 import { Circle } from '@shopify/react-native-skia';
-import {
-  SharedValue,
-  useDerivedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { SharedValue, useDerivedValue } from 'react-native-reanimated';
 
 import { LineChartPointerPulsingCircle } from './LineChartPointerPulsingCircle';
+import { usePointToRenderCoords } from '../LineChartViewPort/hooks/usePointToRenderCoords';
 
 const BLUE_CIRCLE_SIZE = 6;
 const WHITE_CIRCLE_SIZE = 8;
@@ -17,11 +14,14 @@ interface ILineChartPointerProps {
 }
 
 export const LineChartPointer = ({ x, y }: ILineChartPointerProps) => {
-  const animatedY = useDerivedValue(() => withTiming(y.value));
+  const point = useDerivedValue(() => ({ x: x.value, y: y.value }));
+  const renderCoordsPoint = usePointToRenderCoords({ animatedPoint: point });
+  const animatedX = useDerivedValue(() => renderCoordsPoint.value.x);
+  const animatedY = useDerivedValue(() => renderCoordsPoint.value.y);
   return (
     <>
       <LineChartPointerPulsingCircle
-        x={x}
+        x={animatedX}
         y={animatedY}
         color="#627EEA"
         scaleCoefficient={8}
