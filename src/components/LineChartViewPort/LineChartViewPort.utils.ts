@@ -1,30 +1,68 @@
 import {
+  mapPoint3d,
   processTransform3d,
   SkPath,
   SkPoint,
 } from '@shopify/react-native-skia';
 import { SharedValue } from 'react-native-reanimated';
-import { mapPoint3d } from 'react-native-redash';
 import { ICoordinates } from './LineChartViewPort.types';
 
-export const adjustLinePathToViewPort = (
+/*
+Shift coordinates by (-startx, -starty) 
+Scale along X-axis with coefficient (newendx-newstartx)/(endx-startx)  (here -80/3)
+Scale along Y-axis with coefficient (newendy-newstarty)/(endy-starty)   (here -35)
+Shift coordinates by (newstartx, newstarty) 
+ */
+export const getCoordinatesTransformMatrix = (
+  fromCoordinates: ICoordinates,
+  toCoordinates: ICoordinates
+) => {
+  'worklet';
+  const matrix = processTransform3d([
+    { translateX: toCoordinates.startX },
+    { translateY: toCoordinates.startY },
+    {
+      scaleX:
+        (toCoordinates.endX - toCoordinates.startX) /
+        (fromCoordinates.endX - fromCoordinates.startX),
+    },
+    {
+      scaleY:
+        (toCoordinates.endY - toCoordinates.startY) /
+        (fromCoordinates.endY - fromCoordinates.startY),
+    },
+    { translateX: -fromCoordinates.startX },
+    { translateY: -fromCoordinates.startY },
+  ]);
+  return matrix;
+};
+
+export const transformLinePathToRenderCoords = (
   path: SkPath,
   viewPortCoords: ICoordinates,
   renderCoords: ICoordinates
 ) => {
   'worklet';
-  path.transform(getCoordinatesTransformMatrix(viewPortCoords, renderCoords));
+  return path.transform(
+    getCoordinatesTransformMatrix(viewPortCoords, renderCoords)
+  );
 };
 
-export const adjustPointToViewPort = (
-  point: SkPoint,
-  viewPortCoords: ICoordinates,
-  renderCoords: ICoordinates
-) => {
+interface ITransformPointToCoordsParams {
+  point: SkPoint;
+  fromCoords: ICoordinates;
+  toCoords: ICoordinates;
+}
+
+export const transformPointToCoords = ({
+  point,
+  fromCoords,
+  toCoords,
+}: ITransformPointToCoordsParams) => {
   'worklet';
 
   const [x, y] = mapPoint3d(
-    getCoordinatesTransformMatrix(viewPortCoords, renderCoords),
+    getCoordinatesTransformMatrix(fromCoords, toCoords),
     [point.x, point.y, 1]
   );
   return { x, y };
@@ -76,16 +114,20 @@ export const gestureTransformViewPort = (
     renderCoords,
     viewPortCoords
   );
-  const [viewPortDx] = mapPoint3d(matrixRenderRectToViewPort, [dx.value, 0, 1]);
+  const scaleX =
+    (viewPortCoords.endX - viewPortCoords.startX) /
+    (renderCoords.endX - renderCoords.startX);
+  const viewPortDx = dx.value * scaleX;
   const [viewPortFocalX] = mapPoint3d(matrixRenderRectToViewPort, [
     focalX.value,
     0,
     1,
   ]);
+  console.log('dx, focalX', viewPortDx, viewPortFocalX, dx, focalX);
   const gestureTransformMatrix = processTransform3d([
-    { translateX: viewPortDx },
+    { translateX: -viewPortDx },
     { translateX: viewPortFocalX },
-    { scaleX: scale.value },
+    { scaleX: 1 / scale.value },
     { translateX: -viewPortFocalX },
   ]);
   const [startX, startY] = mapPoint3d(gestureTransformMatrix, [
@@ -99,33 +141,29 @@ export const gestureTransformViewPort = (
     1,
   ]);
   // todo make adjustToLocalExtremes configurable
-  return adjustViewPortToLocalExtremes(path, { startX, startY, endX, endY });
+  // return adjustViewPortToLocalExtremes(path, { startX, startY, endX, endY });
+  return { startX, startY, endX, endY };
 };
 
-/*
-Shift coordinates by (-startx, -starty) 
-Scale along X-axis with coefficient (newendx-newstartx)/(endx-startx)  (here -80/3)
-Scale along Y-axis with coefficient (newendy-newstarty)/(endy-starty)   (here -35)
-Shift coordinates by (newstartx, newstarty) 
- */
-const getCoordinatesTransformMatrix = (
-  fromCoordinates: ICoordinates,
-  toCoordinates: ICoordinates
-) =>
-  processTransform3d([
-    { translateX: -fromCoordinates.startX },
-    { translateY: -fromCoordinates.startY },
-    {
-      scaleX:
-        (toCoordinates.endX - toCoordinates.startX) /
-        (fromCoordinates.endX - fromCoordinates.startX),
-    },
-    {
-      scaleY:
-        (toCoordinates.endY - toCoordinates.startY) /
-        (fromCoordinates.endY - fromCoordinates.startY),
-    },
+const fromCoordinates: ICoordinates = {
+  startX: 5,
+  startY: 10,
+  endX: 10,
+  endY: 30,
+};
 
-    { translateX: toCoordinates.startX },
-    { translateY: toCoordinates.startY },
-  ]);
+const toCoordinates = {
+  startX: -5,
+  startY: 5,
+  endX: 15,
+  endY: 10,
+};
+
+const test = () => {
+  const matrix = getCoordinatesTransformMatrix(fromCoordinates, toCoordinates);
+  console.log('TESTTEST', 'matrix', matrix);
+  const [x, y, z] = mapPoint3d(matrix, [5, 20, 1]);
+  console.log('TESTTEST', x, y, z);
+};
+
+test();

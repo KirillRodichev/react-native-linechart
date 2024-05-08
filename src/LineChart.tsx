@@ -4,6 +4,7 @@ import {
   LinearGradient,
   Path,
   processTransform3d,
+  SkPoint,
   usePathValue,
   vec,
 } from '@shopify/react-native-skia';
@@ -33,7 +34,13 @@ import {
 } from './LineChart.utils';
 import { ILineChartInterpolationRanges } from './LineChart.types';
 import { ICoordinates } from './components/LineChartViewPort/LineChartViewPort.types';
-import { gestureTransformViewPort } from './components/LineChartViewPort/LineChartViewPort.utils';
+import {
+  transformLinePathToRenderCoords,
+  transformPointToCoords,
+  gestureTransformViewPort,
+  getCoordinatesTransformMatrix,
+} from './components/LineChartViewPort/LineChartViewPort.utils';
+import { LineChartViewPortProvider } from './components/LineChartViewPort/LineChartViewPortProvider';
 
 const DEFAULT_SCALE_CONFIG = { min: 1, max: 2 };
 
@@ -100,7 +107,9 @@ export const LineChart = ({
     y: value,
   }));
   const initialPath = toLinePathD3(canvasData);
+  console.log('initialPath', initialPath.getBounds());
   const linePath = useSharedValue(initialPath.copy());
+  console.log('linePath', linePath.value.getBounds());
 
   const initialPathBounds = initialPath.getBounds();
   const chartCoords: ICoordinates = {
@@ -128,8 +137,8 @@ export const LineChart = ({
   );
   // it's also a distance from left point of the chart to the left point of the viewport
   const linePathStartPointX = useSharedValue(linePath.value.getPoint(0).x);
-  const linePathEndPointX = useSharedValue(linePath.value.getLastPt().x);
-  const linePathEndPointY = useSharedValue(linePath.value.getLastPt().y);
+  const linePathEndPointX = useDerivedValue(() => linePath.value.getLastPt().x);
+  const linePathEndPointY = useDerivedValue(() => linePath.value.getLastPt().y);
   const linePathTopY = useSharedValue(linePath.value.getBounds().y);
   const linePathBottomY = useSharedValue(linePath.value.getBounds().height);
 
@@ -150,87 +159,87 @@ export const LineChart = ({
     );
   });
 
-  const { everyRule, dVerticalLine, updateVerticalLinesRule } =
+  /*  const { everyRule, dVerticalLine, updateVerticalLinesRule } =
     useVerticalLinesRules({
       data,
       config,
       linePath,
       pointsCount: initialPath.countPoints(),
-    });
+    }); */
 
-  const animatedPath = usePathValue((path) => {
-    'worklet';
-    const canScale = () => {
-      const pathWidth = path.getBounds().width;
-      const { min, max } = scaleConfig;
-      const exceededScaleDown =
-        pathWidth < chart.width * min && scale.value < 1;
-      const exceededScaleUp = pathWidth > chart.width * max && scale.value > 1;
-      return !exceededScaleDown && !exceededScaleUp;
-    };
+  // const animatedPath = usePathValue((path) => {
+  //   'worklet';
+  //   const canScale = () => {
+  //     const pathWidth = path.getBounds().width;
+  //     const { min, max } = scaleConfig;
+  //     const exceededScaleDown =
+  //       pathWidth < chart.width * min && scale.value < 1;
+  //     const exceededScaleUp = pathWidth > chart.width * max && scale.value > 1;
+  //     return !exceededScaleDown && !exceededScaleUp;
+  //   };
 
-    const gestureTransformation = () => {
-      let clampedDx = dx.value;
-      const start = path.getPoint(0).x;
-      const end = path.getLastPt().x;
-      if (dx.value + start > config.width / 2) {
-        clampedDx = -start + config.width / 2;
-      } else if (dx.value + end < config.width / 2) {
-        clampedDx = config.width / 2 - end;
-      }
+  //   const gestureTransformation = () => {
+  //     let clampedDx = dx.value;
+  //     const start = path.getPoint(0).x;
+  //     const end = path.getLastPt().x;
+  //     if (dx.value + start > config.width / 2) {
+  //       clampedDx = -start + config.width / 2;
+  //     } else if (dx.value + end < config.width / 2) {
+  //       clampedDx = config.width / 2 - end;
+  //     }
 
-      if (!canScale()) {
-        return;
-      }
+  //     if (!canScale()) {
+  //       return;
+  //     }
 
-      path.transform(
-        processTransform3d([
-          { translateX: clampedDx },
-          { translateX: focalX.value },
-          { scaleX: scale.value },
-          { translateX: -focalX.value },
-        ])
-      );
-    };
+  //     path.transform(
+  //       processTransform3d([
+  //         { translateX: clampedDx },
+  //         { translateX: focalX.value },
+  //         { scaleX: scale.value },
+  //         { translateX: -focalX.value },
+  //       ])
+  //     );
+  //   };
 
-    const adjustToLocalExtremesTransformation = () => {
-      // TODO: if facing performance issues, consider re-evaluation only when the path actually changes
-      // for now it's left as is, because simple condition and return doesn't work (seems line path.transform must be applied on each frame)
-      // possible solution: memoize min and max points, and re-evaluate only when the path changes
-      const { min, max } = getViewportVerticalMinMax(
-        path,
-        localExtremesIndexes.value,
-        chart.width
-      );
-      const nextChartHeight = max.y - min.y;
-      const scaleY = chart.height / nextChartHeight;
-      const translateY = chart.bottomOffset - min.y * scaleY; // ensures that the min point is at the top of the chart
+  //   const adjustToLocalExtremesTransformation = () => {
+  //     // TODO: if facing performance issues, consider re-evaluation only when the path actually changes
+  //     // for now it's left as is, because simple condition and return doesn't work (seems line path.transform must be applied on each frame)
+  //     // possible solution: memoize min and max points, and re-evaluate only when the path changes
+  //     const { min, max } = getViewportVerticalMinMax(
+  //       path,
+  //       localExtremesIndexes.value,
+  //       chart.width
+  //     );
+  //     const nextChartHeight = max.y - min.y;
+  //     const scaleY = chart.height / nextChartHeight;
+  //     const translateY = chart.bottomOffset - min.y * scaleY; // ensures that the min point is at the top of the chart
 
-      path.transform(processTransform3d([{ translateY }, { scaleY }]));
+  //     path.transform(processTransform3d([{ translateY }, { scaleY }]));
 
-      maxPointDebug.value = max;
-      minPointDebug.value = min;
-    };
+  //     maxPointDebug.value = max;
+  //     minPointDebug.value = min;
+  //   };
 
-    const updatePathValues = () => {
-      updateVerticalLinesRule(path);
+  //   const updatePathValues = () => {
+  //     updateVerticalLinesRule(path);
 
-      linePathStartPointX.value = path.getPoint(0).x;
-      linePathEndPointX.value = path.getLastPt().x;
-      linePathEndPointY.value = path.getLastPt().y;
+  //     linePathStartPointX.value = path.getPoint(0).x;
+  //     linePathEndPointX.value = path.getLastPt().x;
+  //     linePathEndPointY.value = path.getLastPt().y;
 
-      const { y, height } = path.getBounds();
-      linePathTopY.value = y;
-      linePathBottomY.value = height + y;
-    };
+  //     const { y, height } = path.getBounds();
+  //     linePathTopY.value = y;
+  //     linePathBottomY.value = height + y;
+  //   };
 
-    path.addPath(linePath.value);
-    gestureTransformation();
-    adjustToLocalExtremesTransformation();
-    updatePathValues();
-  });
+  //   path.addPath(linePath.value);
+  //   gestureTransformation();
+  //   adjustToLocalExtremesTransformation();
+  //   updatePathValues();
+  // });
 
-  const interpolationRangesY: ILineChartInterpolationRanges = {
+  /* const interpolationRangesY: ILineChartInterpolationRanges = {
     dataRange: [globalMinMaxValues.max, globalMinMaxValues.min],
     coordsRange: [linePathTopY, linePathBottomY],
   };
@@ -238,15 +247,49 @@ export const LineChart = ({
   const interpolationRangesX: ILineChartInterpolationRanges = {
     dataRange: [data[0]?.timestamp ?? 0, data[data.length - 1]?.timestamp ?? 0],
     coordsRange: [linePathStartPointX, linePathEndPointX],
-  };
+  }; */
 
-  useUpdateLinePathOnLastPointChange({
+  /* useUpdateLinePathOnLastPointChange({
     data,
     linePath,
     animatedPath,
     // workaround: when gesture is active, chart updates lead to horizontal jumps
     shouldIgnoreUpdates: hasActiveGesture,
+  }); */
+
+  const animatedPath = usePathValue((path) => {
+    'worklet';
+    path.addPath(linePath.value);
+    path.transform(
+      getCoordinatesTransformMatrix(
+        animatedViewPortCoordinatesValue.value,
+        renderCoords
+      )
+    );
+    console.log('viewPort', animatedViewPortCoordinatesValue.value);
+    console.log('chartCoords', chartCoords);
+    console.log(
+      'path1',
+      linePath.value.getBounds().x,
+      linePath.value.getBounds().y,
+      linePath.value.getBounds().height,
+      linePath.value.getBounds().width
+    );
+    console.log(
+      'path2',
+      path.getBounds().x,
+      path.getBounds().y,
+      path.getBounds().height,
+      path.getBounds().width
+    );
+    /* transformLinePathToRenderCoords(
+      path,
+      animatedViewPortCoordinatesValue.value,
+      renderCoords
+    ); */
   });
+
+  console.log('animatedPath', animatedPath.value.getBounds());
 
   return (
     <LineChartGestureDetector
@@ -263,15 +306,21 @@ export const LineChart = ({
       linePathStartPointX={linePathStartPointX}
       linePathEndPointX={linePathEndPointX}
     >
-      <CanvasWithContext style={{ width: config.width, height: config.height }}>
-        <LineChartConfigProvider
-          config={config}
-          formatters={{
-            formatTimestamp: formatters?.formatTimestamp,
-            formatValue: formatters?.formatValue,
-          }}
+      <LineChartViewPortProvider
+        renderCoords={renderCoords}
+        viewPortCoords={animatedViewPortCoordinatesValue}
+      >
+        <CanvasWithContext
+          style={{ width: config.width, height: config.height }}
         >
-          <LineChartGrid
+          <LineChartConfigProvider
+            config={config}
+            formatters={{
+              formatTimestamp: formatters?.formatTimestamp,
+              formatValue: formatters?.formatValue,
+            }}
+          >
+            {/*<LineChartGrid
             data={data}
             everyRule={everyRule}
             gridHeight={gridHeight}
@@ -279,39 +328,35 @@ export const LineChart = ({
             dVerticalLine={dVerticalLine}
             interpolationRangesY={interpolationRangesY}
             interpolationRangesX={interpolationRangesX}
-          />
+        />*/}
 
-          <LineChartClipPath height={gridHeight} width={chart.width}>
-            <Path style="stroke" strokeWidth={2} path={animatedPath}>
-              <LinearGradient
-                start={vec(config.width / 2, 0)}
-                end={vec(config.width / 2, gridHeight)}
-                colors={config.lineColors}
-              />
-            </Path>
-            <LineChartPointer x={linePathEndPointX} y={linePathEndPointY} />
-          </LineChartClipPath>
+            <LineChartClipPath height={gridHeight} width={chart.width}>
+              <Path style="stroke" strokeWidth={2} path={animatedPath}>
+                <LinearGradient
+                  start={vec(config.width / 2, 0)}
+                  end={vec(config.width / 2, gridHeight)}
+                  colors={config.lineColors}
+                />
+              </Path>
+              <LineChartPointer x={linePathEndPointX} y={linePathEndPointY} />
+            </LineChartClipPath>
 
-          {addons?.map((addon, index) => (
-            <LineChartAddon
-              key={index}
-              addon={addon}
+            {addons?.map((addon, index) => (
+              <LineChartAddon key={index} addon={addon} />
+            ))}
+
+            {/*<LineChartCrossHair
+              chartWidth={chart.width}
+              crossHair={crossHair}
+              viewPortHeight={gridHeight}
+              linePath={animatedPath}
+              linePathStartPointX={linePathStartPointX}
+              linePathEndPointX={linePathEndPointX}
               interpolationRangesY={interpolationRangesY}
-              interpolationRangesX={interpolationRangesX}
-            />
-          ))}
-
-          <LineChartCrossHair
-            chartWidth={chart.width}
-            crossHair={crossHair}
-            viewPortHeight={gridHeight}
-            linePath={animatedPath}
-            linePathStartPointX={linePathStartPointX}
-            linePathEndPointX={linePathEndPointX}
-            interpolationRangesY={interpolationRangesY}
-          />
-        </LineChartConfigProvider>
-      </CanvasWithContext>
+            />*/}
+          </LineChartConfigProvider>
+        </CanvasWithContext>
+      </LineChartViewPortProvider>
     </LineChartGestureDetector>
   );
 };
